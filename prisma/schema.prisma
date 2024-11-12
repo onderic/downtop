@@ -11,9 +11,59 @@ datasource db {
 }
 
 model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  contact   Int      @unique
+  role      Role
+  password  String 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
+model Shop {
+  id            String   @id @default(uuid())
+  desc          String
+  street        String
+  businessType  String
+  buildingName  String
+  shopNumber    String
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  categoryId    Int
+  name          String
+  quantity      Int
+  minPurchase   Int
+  description   String
+  brand         String
+  mktPrice      Float
+  sellingPrice  Float
+  size          String
+  colors        String[] @db.StringArray
+  img           String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  shopId        String
+  shop          Shop     @relation(fields: [shopId], references: [id])
 }
 
 model Token {
-
+  id          String   @id @default(uuid())
+  userId      String
+  token       String
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime  
+  user        User     @relation(fields: [userId], references: [id])
 }
+
+enum Role {
+  admin
+  seller
+  buyer
+}
+
