@@ -3,16 +3,16 @@
 import { z } from 'zod';
 
 export const NewProductSchema = z.object({
-  name: z.string(),
-  quantity: z.number(),
-  minPurchase: z.number(),
-  description: z.string(),
-  brand: z.string(),
-  mktPrice: z.number(),
-  sellingPrice: z.number(),
-  size: z.string().optional(),
-  colors: z.array(z.string()),
-  img: z.string()
+  name: z.string().min(1, 'Name is required'),
+  quantity: z.number().int('Quantity must be an integer').positive('Quantity must be positive'),
+  minPurchase: z.number().positive('Minimum purchase must be positive'),
+  description: z.string().min(1, 'Description is required'),
+  brand: z.string().min(1, 'Brand is required'),
+  mktPrice: z.number().positive('Market price must be positive'),
+  sellingPrice: z.number().positive('Selling price must be positive'),
+  size: z.string().min(1, 'Size is required'),
+  colors: z.array(z.string().min(1, 'Color is required')),
+  img: z.string().min(1, 'Image URL is required')
 });
 
 export const ProductSchema = NewProductSchema.extend({
