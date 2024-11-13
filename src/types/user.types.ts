@@ -1,18 +1,23 @@
 import { Role } from './enums';
+import { z } from 'zod';
 
-export interface NewUser {
-  username: string;
-  contact: number;
-  role: Role;
-  password: string;
-}
+export const newUserSchema = z.object({
+  username: z.string(),
+  contact: z.number().min(10),
+  role: z.nativeEnum(Role),
+  password: z.string().min(8)
+});
 
-export interface User extends NewUser {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export const userSchema = newUserSchema.extend({
+  id: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date()
+});
 
-export interface UserUpdateDTO extends Partial<User> {
-  id: string;
-}
+export const userUpdateDTOSchema = userSchema.partial().extend({
+  id: z.string()
+});
+
+export type NewUser = z.infer<typeof newUserSchema>;
+export type User = z.infer<typeof userSchema>;
+export type UserUpdateDTO = z.infer<typeof userUpdateDTOSchema>;
