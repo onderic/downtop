@@ -858,7 +858,7 @@
     "@prisma/engines-version" "5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2"
     "@prisma/fetch-engine" "5.22.0"
     "@prisma/get-platform" "5.22.0"
-
+    
 "@prisma/fetch-engine@5.22.0":
   version "5.22.0"
   resolved "https://registry.yarnpkg.com/@prisma/fetch-engine/-/fetch-engine-5.22.0.tgz#4fb691b483a450c5548aac2f837b267dd50ef52e"
@@ -5448,5 +5448,5 @@ z-schema@^5.0.1:
 
 zod@^3.23.8:
   version "3.23.8"
-  resolved "https://registry.npmjs.org/zod/-/zod-3.23.8.tgz"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.23.8.tgz#e37b957b5d52079769fb8097099b592f0ef4067d"
   integrity sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==
