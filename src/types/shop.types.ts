@@ -4,7 +4,7 @@ export const NewShopSchema = z.object({
   desc: z.string().min(1, 'Description is required'),
   street: z.string().min(1, 'Street is required'),
   businessType: z.string().min(1, 'Business type is required'),
-  buildingName: z.string(),
+  buildingName: z.string().min(1, 'Building name is required'),
   shopNumber: z.string().min(1, 'Shop number is required'),
   userId: z.string().uuid('Invalid user ID format')
 });

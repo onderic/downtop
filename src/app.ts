@@ -10,6 +10,7 @@ import xss from './middlewares/xss';
 import { authLimiter } from './middlewares/rateLimiter';
 import { errorConverter, errorHandler } from './middlewares/error';
 import ApiError from './utils/ApiError';
+import routes from './routes/v1';
 
 const app = express();
 
@@ -18,25 +19,20 @@ if (config.env !== 'test') {
   app.use(morgan.errorHandler);
 }
 
-// set security HTTP headers
 app.use(helmet());
 
 app.use(express.json());
 
-// parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 
-// sanitize request data
 app.use(xss());
 
-// gzip compression
 app.use(compression());
 
-// cors
 app.use(cors());
 app.options('*', cors());
 
-// jwt
+app.use('/v1', routes);
 
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
@@ -48,7 +44,6 @@ app.use((req, res, next) => {
 
 app.use(errorConverter);
 
-// handle error
 app.use(errorHandler);
 
 export default app;

@@ -5,7 +5,7 @@ import { ZodSchema } from 'zod';
 import pick from '../utils/pick';
 
 const validate = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
-  const validatedData = pick(req, ['body', 'params', 'query']);
+  const validatedData = req.body; // Updated to only include req.body
   const validationResult = schema.safeParse(validatedData);
 
   if (!validationResult.success) {

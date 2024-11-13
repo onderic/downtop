@@ -1,11 +1,11 @@
-import { Role } from './enums';
+import { Role } from '@prisma/client'; // Import the Role enum from Prisma
 import { z } from 'zod';
 
 export const newUserSchema = z.object({
-  username: z.string(),
-  contact: z.number().min(10),
-  role: z.nativeEnum(Role),
-  password: z.string().min(8)
+  username: z.string().min(3, 'Username must be at least 3 characters long'),
+  contact: z.number().min(10, 'Contact number must be at least 10 digits long'),
+  role: z.nativeEnum(Role, { message: 'Role must be either admin, seller, or buyer' }),
+  password: z.string().min(8, 'Password must be at least 8 characters long')
 });
 
 export const userSchema = newUserSchema.extend({
@@ -14,10 +14,11 @@ export const userSchema = newUserSchema.extend({
   updatedAt: z.date()
 });
 
-export const userUpdateDTOSchema = userSchema.partial().extend({
-  id: z.string()
-});
+const safeUserSchema = userSchema.omit({ password: true });
+
+export const userUpdateDTOSchema = userSchema.partial().extend({});
 
 export type NewUser = z.infer<typeof newUserSchema>;
 export type User = z.infer<typeof userSchema>;
 export type UserUpdateDTO = z.infer<typeof userUpdateDTOSchema>;
+export type SafeUser = z.infer<typeof safeUserSchema>;
