@@ -1,36 +1,41 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import Joi from 'joi';
+import { z } from 'zod';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-const envVarsSchema = Joi.object()
-  .keys({
-    NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
-    PORT: Joi.number().default(3000),
-    JWT_SECRET: Joi.string().required().description('JWT secret key'),
-    JWT_ACCESS_EXPIRATION_MINUTES: Joi.number()
-      .default(30)
-      .description('minutes after which access tokens expire'),
-    JWT_REFRESH_EXPIRATION_DAYS: Joi.number()
-      .default(30)
-      .description('days after which refresh tokens expire'),
-    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
-      .default(10)
-      .description('minutes after which reset password token expires'),
-    JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: Joi.number()
-      .default(10)
-      .description('minutes after which verify email token expires')
-  })
-  .unknown();
+const envVarsSchema = z.object({
+  NODE_ENV: z.enum(['production', 'development', 'test']),
+  PORT: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .default('3000'),
+  JWT_SECRET: z.string(),
+  JWT_ACCESS_EXPIRATION_MINUTES: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .default('30'),
+  JWT_REFRESH_EXPIRATION_DAYS: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .default('30'),
+  JWT_RESET_PASSWORD_EXPIRATION_MINUTES: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .default('10'),
+  JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .default('10')
+});
 
-const { value: envVars, error } = envVarsSchema
-  .prefs({ errors: { label: 'key' } })
-  .validate(process.env);
+const parsedEnv = envVarsSchema.safeParse(process.env);
 
-if (error) {
-  throw new Error(`Config validation error: ${error.message}`);
+if (!parsedEnv.success) {
+  throw new Error(`Config validation error: ${parsedEnv.error.format()}`);
 }
+
+const envVars = parsedEnv.data;
 
 export default {
   env: envVars.NODE_ENV,
