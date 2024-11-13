@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check **/*.ts",
     "prettier:fix": "prettier --write **/*.ts",
-    "db:push": "npx prisma migrate dev --name ${npm_config_name} && npx prisma generate",
+    "db:push": "npx prisma migrate dev --name ${name} && npx prisma generate",
     "db:studio": "prisma studio",
     "prepare": "husky install",
     "build": "rimraf build && tsc -p tsconfig.json"
