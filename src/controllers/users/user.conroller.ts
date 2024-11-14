@@ -5,8 +5,8 @@ import { Role } from '@prisma/client';
 import ApiError from '../../utils/ApiError';
 
 const createUser = catchAsync(async (req, res) => {
-  const { contact, password, username, role } = req.body;
-  const user = await userService.createUser({ contact, password, username, role });
+  const { phone, password, username, role } = req.body;
+  const user = await userService.createUser({ phone, password, username, role });
   res.status(httpStatus.CREATED).send(user);
 });
 
