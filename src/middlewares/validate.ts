@@ -2,7 +2,6 @@ import httpStatus from 'http-status';
 import ApiError from '../utils/ApiError';
 import { NextFunction, Request, Response } from 'express';
 import { ZodSchema } from 'zod';
-import pick from '../utils/pick';
 
 const validate = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
   const validatedData = req.body; // Updated to only include req.body

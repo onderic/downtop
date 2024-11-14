@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const newUserSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters long'),
-  contact: z.number().min(10, 'Contact number must be at least 10 digits long'),
+  phone: z.string().min(10, 'Contact number must be at least 10 digits long'),
   role: z.nativeEnum(Role, { message: 'Role must be either admin, seller, or buyer' }),
   password: z.string().min(8, 'Password must be at least 8 characters long')
 });
@@ -14,7 +14,7 @@ export const userSchema = newUserSchema.extend({
   updatedAt: z.date()
 });
 
-const safeUserSchema = userSchema.omit({ password: true });
+export const safeUserSchema = userSchema.omit({ password: true });
 
 export const userUpdateDTOSchema = userSchema.partial().extend({});
 

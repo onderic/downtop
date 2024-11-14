@@ -2,7 +2,8 @@ import express from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
-// import passport from 'passport';
+import passport from 'passport';
+import passportStrategy from './middlewares/passport';
 import httpStatus from 'http-status';
 import config from './config/config';
 import morgan from './config/morgan';
@@ -31,6 +32,9 @@ app.use(compression());
 
 app.use(cors());
 app.options('*', cors());
+
+app.use(passport.initialize());
+passport.use(passportStrategy);
 
 app.use('/v1', routes);
 

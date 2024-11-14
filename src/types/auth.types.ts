@@ -1,11 +1,8 @@
 import { z } from 'zod';
-import { userSchema } from './user.types';
-import { Role } from './enums';
+import { safeUserSchema } from './user.types';
 
 export const JwtPayloadSchema = z.object({
-  userId: z.string().uuid('Invalid user ID format'),
-  username: z.string().min(1, 'Username is required'),
-  role: z.nativeEnum(Role),
+  id: z.string().uuid('Invalid user ID format'),
   iat: z.number(),
   exp: z.number()
 });
@@ -16,13 +13,13 @@ export const JwtTokenSchema = z.object({
 });
 
 export const LoginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  phone: z.string().min(1, 'phone is required'),
   password: z.string().min(6, 'Password must be at least 6 characters long')
 });
 
 export const AuthResponseSchema = z.object({
-  user: userSchema,
-  token: JwtTokenSchema
+  user: safeUserSchema,
+  tokens: JwtTokenSchema
 });
 
 export const RefreshTokenDTOSchema = z.object({
@@ -31,7 +28,8 @@ export const RefreshTokenDTOSchema = z.object({
 
 // TypeScript types
 export type JwtPayload = z.infer<typeof JwtPayloadSchema>;
-export type JwtToken = z.infer<typeof JwtTokenSchema>;
+export type JwtTokens = z.infer<typeof JwtTokenSchema>;
 export type Login = z.infer<typeof LoginSchema>;
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 export type RefreshTokenDTO = z.infer<typeof RefreshTokenDTOSchema>;
+export type TokenTypes = 'access' | 'refresh';
