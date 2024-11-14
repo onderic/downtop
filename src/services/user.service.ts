@@ -4,6 +4,7 @@ import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import { encryptPassword } from '../utils/encryption';
 import { NewUser, UserUpdateDTO, SafeUser } from '../types/user.types';
+import exclude from '../utils/exclude';
 
 const createUser = async (userData: NewUser): Promise<Omit<User, 'password'>> => {
   const role = userData.role as Role;
@@ -25,7 +26,7 @@ const createUser = async (userData: NewUser): Promise<Omit<User, 'password'>> =>
     }
   });
 
-  const { password, ...safeUser } = newUser;
+  const safeUser = exclude(newUser, ['password']);
   return safeUser;
 };
 

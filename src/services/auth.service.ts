@@ -1,9 +1,8 @@
 import httpStatus from 'http-status';
 import ApiError from '../utils/ApiError';
 import { isPasswordMatch } from '../utils/encryption';
-import { SafeUser } from '../types/user.types';
 import tokenService from './token.service';
-import { AuthResponse, Login } from '../types/auth.types';
+import { AuthResponse, JwtTokens, Login } from '../types/auth.types';
 import { getUser } from './user.service';
 import exclude from '../utils/exclude';
 
@@ -24,13 +23,10 @@ const logoutUser = async (userId: string, refreshToken: string): Promise<void> =
   await tokenService.deleteToken(userId, refreshToken);
 };
 
-const refreshToken = async (
-  userId: string,
-  refreshToken: string
-): Promise<{ refreshToken: string }> => {
+const refreshToken = async (userId: string, refreshToken: string): Promise<JwtTokens> => {
   await tokenService.deleteToken(userId, refreshToken);
-  const token = await tokenService.generateToken(userId, 'refresh');
-  return { refreshToken: token };
+  const tokens = await tokenService.genAuthtokens(userId);
+  return tokens;
 };
 export default {
   loginUser,
