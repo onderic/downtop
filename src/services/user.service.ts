@@ -11,8 +11,6 @@ const createUser = async (userData: NewUser): Promise<Omit<User, 'password'>> =>
   if (role == 'admin') {
     throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
   }
-
-  throw new ApiError(httpStatus.BAD_REQUEST, 'Role must be either admin, seller, or buyer');
   const user = await getUser({ phone: userData.phone });
 
   if (user) {
@@ -110,13 +108,10 @@ const getAllUsers = async ({
   const totalUsers = await prisma.user.count({
     where: where
   });
-  console.log('Total users found:', totalUsers); // Log the total users found
 
   const totalPages = Math.ceil(totalUsers / limit);
 
   // Fetch the users with pagination
-  console.log('Fetching users with pagination:', { where, skip, limit }); // Log the parameters for fetching users
-
   const users = await prisma.user.findMany({
     where: where,
     skip,
@@ -129,7 +124,7 @@ const getAllUsers = async ({
 
   return {
     users: users.map((user) => {
-      const { password, ...safeUser } = user;
+      const safeUser = exclude(user, ['password']);
       return safeUser;
     }),
     totalUsers,
