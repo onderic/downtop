@@ -5,8 +5,14 @@ import ApiError from '../utils/ApiError';
 import { encryptPassword } from '../utils/encryption';
 import { NewUser, UserUpdateDTO, SafeUser } from '../types/user.types';
 
-const createUser = async (userData: NewUser): Promise<User> => {
-  const user = await getUser({ contact: userData.contact });
+const createUser = async (userData: NewUser): Promise<Omit<User, 'password'>> => {
+  const role = userData.role as Role;
+  if (role == 'admin') {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
+  }
+
+  throw new ApiError(httpStatus.BAD_REQUEST, 'Role must be either admin, seller, or buyer');
+  const user = await getUser({ phone: userData.phone });
 
   if (user) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User already exists');
@@ -18,7 +24,9 @@ const createUser = async (userData: NewUser): Promise<User> => {
       password: await encryptPassword(userData.password)
     }
   });
-  return newUser;
+
+  const { password, ...safeUser } = newUser;
+  return safeUser;
 };
 
 const updateUser = async (userId: string, updateProfileDto: UserUpdateDTO): Promise<void> => {
@@ -129,17 +137,14 @@ const getAllUsers = async ({
   };
 };
 
-const getUser = async (userParams: {
-  username?: string;
-  contact?: number;
+export const getUser = async (userParams: {
+  phone?: string;
   id?: string;
 }): Promise<User | null> => {
-  const where: { username?: string; contact?: number; id?: string } = {};
+  const where: { phone?: string; id?: string } = {};
 
-  if (userParams.username) {
-    where.username = userParams.username;
-  } else if (userParams.contact) {
-    where.contact = userParams.contact;
+  if (userParams.phone) {
+    where.phone = userParams.phone;
   } else if (userParams.id) {
     where.id = userParams.id;
   }
