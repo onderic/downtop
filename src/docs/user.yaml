@@ -1,0 +1,244 @@
+paths:
+  /users/register:
+    post:
+      summary: Register a new user
+      description: Registers a new user with provided details
+      operationId: registerUser
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserSchema'
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseSchema'
+        '400':
+          description: Registration failed due to validation errors
+
+  /users/{userId}:
+    get:
+      summary: Get user details
+      description: Retrieves details of a user by their ID
+      operationId: getUserById
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseSchema'
+        '404':
+          description: User not found
+
+    put:
+      summary: Update user details
+      description: Updates details of a specific user by ID
+      operationId: updateUser
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserSchema'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseSchema'
+        '404':
+          description: User not found
+        '400':
+          description: Update failed due to validation errors
+
+  /users:
+    get:
+      summary: Get a list of users
+      description: Fetch a paginated list of users.
+      parameters:
+        - name: page
+          in: query
+          description: The page number for pagination.
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          description: The number of users per page.
+          required: true
+          schema:
+            type: integer
+            example: 10
+        - name: role
+          in: query
+          description: Filter users by their role.
+          required: false
+          schema:
+            type: string
+            enum: [buyer, seller, admin]
+        - name: startDate
+          in: query
+          description: Filter users by creation date (start).
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: Filter users by creation date (end).
+          required: false
+          schema:
+            type: string
+            format: date
+      tags:
+        - User
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: A list of users with pagination info.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SafeUser'
+                  totalUsers:
+                    type: integer
+                    example: 100
+                  totalPages:
+                    type: integer
+                    example: 10
+                  hasNextPage:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized. User is not authenticated.
+
+components:
+  schemas:
+    RegisterUserSchema:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the new user
+        password:
+          type: string
+          description: The password of the new user
+        phone:
+          type: string
+          description: The phone of the new user
+        role:
+          type: string
+          description: The role of the new user
+      required:
+        - username
+        - password
+        - role
+
+    UpdateUserSchema:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the user
+        username:
+          type: string
+          description: Updated username of the user
+          minLength: 3
+        phone:
+          type: string
+          description: Updated phone number of the user
+          minLength: 10
+        role:
+          type: string
+          enum:
+            - admin
+            - seller
+            - buyer
+          description: Updated role of the user (must be either "admin", "seller", or "buyer")
+      required:
+        - id
+    UserResponseSchema:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique ID of the user
+        username:
+          type: string
+          description: The username of the user
+        phone:
+          type: string
+          description: The phone of the user
+        role:
+          type: string
+          enum:
+            - admin
+            - seller
+            - buyer
+          description: The role of the user
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the user was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: The date and time when the user was created
+    SafeUser:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique ID of the user
+        username:
+          type: string
+          description: The username of the user
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the user was created
+        role:
+          type: string
+          enum:
+            - admin
+            - seller
+            - buyer
+          description: The role of the user
+        updatedAt:
+          type: string
+          format: date-time
+          description: The date and time when the user was updated
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

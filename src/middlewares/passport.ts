@@ -10,7 +10,6 @@ const opts = {
 const strategy = new JwtStrategy(opts, async (jwtPayload, done) => {
   try {
     if (!jwtPayload.id) {
-      console.log('No id in JWT>>>>>>>>>');
       return done(null, false); // Return false if id is not present
     }
     const user = await prisma.user.findUnique({ where: { id: jwtPayload.id } });
