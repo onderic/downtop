@@ -3,7 +3,7 @@ import { Role } from '@prisma/client';
 const allRoles = {
   [Role.buyer]: [],
   [Role.admin]: ['getAllUsers', 'manageUsers'],
-  [Role.seller]: ['updateMyshop', 'getMyShops']
+  [Role.seller]: ['createShop', 'getShop', 'updateShop', 'deleteShop']
 };
 
 export const roles = Object.keys(allRoles);
