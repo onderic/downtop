@@ -12,6 +12,7 @@ const createUser = catchAsync(async (req, res) => {
 
 const updateUser = catchAsync(async (req, res) => {
   const { userId } = req.params;
+
   if (Object.keys(req.body).length === 0) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User data is required');
   }

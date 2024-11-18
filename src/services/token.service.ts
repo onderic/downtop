@@ -35,6 +35,7 @@ const saveToken = async (
   refreshToken: string,
   expiresAt: string
 ): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const tokenDoc = await prisma.token.create({
     data: {
       token: refreshToken,
