@@ -12,7 +12,14 @@ const strategy = new JwtStrategy(opts, async (jwtPayload, done) => {
     if (!jwtPayload.id) {
       return done(null, false); // Return false if id is not present
     }
-    const user = await prisma.user.findUnique({ where: { id: jwtPayload.id } });
+    const user = await prisma.user.findUnique({
+      select: {
+        id: true,
+        role: true
+      },
+      where: { id: jwtPayload.id }
+    });
+
     if (user) {
       return done(null, user);
     }
