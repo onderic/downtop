@@ -21,4 +21,4 @@ db
 build
 
 
-prisma/migrations
+prisma/migrations/
