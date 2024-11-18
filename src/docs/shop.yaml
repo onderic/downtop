@@ -1,0 +1,234 @@
+paths:
+  /shops:
+    post:
+      summary: Create a new shop
+      description: Creates a new shop for a user
+      operationId: createShop
+      tags:
+        - Shop
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewShopSchema'
+      responses:
+        '201':
+          description: Shop created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopSchema'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+    get:
+      summary: Get all shops
+      description: Retrieves a list of shops with pagination and filtering options
+      operationId: getShops
+      tags:
+        - Shop
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of shops to return per page
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: street
+          schema:
+            type: string
+          description: Filter by street
+        - in: query
+          name: businessType
+          schema:
+            type: string
+          description: Filter by business type
+        - in: query
+          name: buildingName
+          schema:
+            type: string
+          description: Filter by building name
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          description: Filter by start date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          description: Filter by end date
+      responses:
+        '200':
+          description: Successfully retrieved shops
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopPaginatedResponse'
+
+  /shops/{shopId}:
+    get:
+      summary: Get a shop
+      description: Retrieves a shop by ID
+      operationId: getShop
+      tags:
+        - Shop
+      parameters:
+        - in: path
+          name: shopId
+          required: true
+          schema:
+            type: string
+          description: Shop ID
+      responses:
+        '200':
+          description: Successfully retrieved shop
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopSchema'
+        '404':
+          description: Shop not found
+
+    put:
+      summary: Update a shop
+      description: Updates an existing shop
+      operationId: updateShop
+      tags:
+        - Shop
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: shopId
+          required: true
+          schema:
+            type: string
+          description: Shop ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopUpdateDTOSchema'
+      responses:
+        '200':
+          description: Shop updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopSchema'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Shop not found
+
+    delete:
+      summary: Delete a shop
+      description: Deletes a shop
+      operationId: deleteShop
+      tags:
+        - Shop
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: shopId
+          required: true
+          schema:
+            type: string
+          description: Shop ID
+      responses:
+        '204':
+          description: Shop deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Shop not found
+
+components:
+  schemas:
+    NewShopSchema:
+      type: object
+      properties:
+        desc:
+          type: string
+          description: Shop description
+        street:
+          type: string
+          description: Street address
+        businessType:
+          type: string
+          description: Type of business
+        buildingName:
+          type: string
+          description: Name of the building
+        shopNumber:
+          type: string
+          description: Shop number
+        userId:
+          type: string
+          format: uuid
+          description: ID of the shop owner
+      required:
+        - desc
+        - street
+        - businessType
+        - buildingName
+        - shopNumber
+        - userId
+
+    ShopSchema:
+      allOf:
+        - $ref: '#/components/schemas/NewShopSchema'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    ShopUpdateDTOSchema:
+      type: object
+      properties:
+        desc:
+          type: string
+        street:
+          type: string
+        businessType:
+          type: string
+        buildingName:
+          type: string
+        shopNumber:
+          type: string
+
+    ShopPaginatedResponse:
+      type: object
+      properties:
+        shops:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopSchema'
+        totalShops:
+          type: integer
+        totalPages:
+          type: integer
+        hasNextPage:
+          type: boolean
