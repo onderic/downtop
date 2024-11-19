@@ -1,0 +1,297 @@
+paths:
+  /products:
+    post:
+      summary: Create a new product
+      description: Creates a new product
+      operationId: createProduct
+      tags:
+        - Product
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProductSchema'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSchema'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+    get:
+      summary: Get all products
+      description: Retrieves a list of products with pagination and filtering options
+      operationId: getAllProducts
+      tags:
+        - Product
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of products to return per page
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Filter by product name
+        - in: query
+          name: categoryId
+          schema:
+            type: string
+          description: Filter by category ID
+        - in: query
+          name: minPrice
+          schema:
+            type: number
+          description: Filter by minimum price
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+          description: Filter by maximum price
+      responses:
+        '200':
+          description: Successfully retrieved products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductPaginatedResponse'
+
+  /products/{productId}:
+    get:
+      summary: Get a product
+      description: Retrieves a product by ID
+      operationId: getProduct
+      tags:
+        - Product
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      responses:
+        '200':
+          description: Successfully retrieved product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSchema'
+        '404':
+          description: Product not found
+
+    put:
+      summary: Update a product
+      description: Updates an existing product
+      operationId: updateProduct
+      tags:
+        - Product
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdateDTOSchema'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSchema'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Product not found
+
+    delete:
+      summary: Delete a product
+      description: Deletes a product
+      operationId: deleteProduct
+      tags:
+        - Product
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      responses:
+        '204':
+          description: Product deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Product not found
+
+components:
+  schemas:
+    NewProductSchema:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Product name
+          minLength: 1
+        quantity:
+          type: integer
+          description: Product quantity
+          minimum: 1
+        minPurchase:
+          type: number
+          description: Minimum purchase quantity
+          minimum: 1
+        description:
+          type: string
+          description: Product description
+          minLength: 1
+        brand:
+          type: string
+          description: Product brand
+          minLength: 1
+        mktPrice:
+          type: number
+          description: Market price
+          minimum: 0
+        sellingPrice:
+          type: number
+          description: Selling price
+          minimum: 0
+        size:
+          type: string
+          description: Product size
+          minLength: 1
+        colors:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          description: Available colors
+        img:
+          type: string
+          description: Product image URL
+          minLength: 1
+        shopId:
+          type: string
+          description: ID of the shop selling the product
+          minLength: 1
+        categoryId:
+          type: integer
+          description: ID of the product category
+          minimum: 1
+      required:
+        - name
+        - quantity
+        - minPurchase
+        - description
+        - brand
+        - mktPrice
+        - sellingPrice
+        - size
+        - colors
+        - img
+        - shopId
+        - categoryId
+
+    ProductSchema:
+      allOf:
+        - $ref: '#/components/schemas/NewProductSchema'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    ProductUpdateDTOSchema:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+        quantity:
+          type: integer
+          minimum: 1
+        minPurchase:
+          type: number
+          minimum: 1
+        description:
+          type: string
+          minLength: 1
+        brand:
+          type: string
+          minLength: 1
+        mktPrice:
+          type: number
+          minimum: 0
+        sellingPrice:
+          type: number
+          minimum: 0
+        size:
+          type: string
+          minLength: 1
+        colors:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        img:
+          type: string
+          minLength: 1
+        shopId:
+          type: string
+          minLength: 1
+        categoryId:
+          type: integer
+          minimum: 1
+      required:
+        - id
+
+    ProductPaginatedResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSchema'
+        totalProducts:
+          type: integer
+        totalPages:
+          type: integer
+        hasNextPage:
+          type: boolean

@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  username  String   
+  username  String
   phone     String   @unique
   role      Role
   password  String
@@ -36,6 +36,12 @@ model Shop {
   products      Product[] @relation
 }
 
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+  products      Product[] @relation
+}
+
 model Product {
   id            String   @id @default(uuid())
   categoryId    Int
@@ -53,6 +59,7 @@ model Product {
   updatedAt     DateTime @updatedAt
   shopId        String
   shop          Shop     @relation(fields: [shopId], references: [id])
+  category      Category @relation(fields: [categoryId], references: [id])
 }
 
 model Token {
