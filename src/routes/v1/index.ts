@@ -3,7 +3,8 @@ import userRoute from './user.route';
 import authRoute from './auth.route';
 import docsRoute from './docs.route';
 import shopRoute from './shop.route';
-
+import categoryRoute from './category.route';
+import productRoute from './product.route';
 const router = express.Router();
 
 const defaultRoutes = [
@@ -22,6 +23,14 @@ const defaultRoutes = [
   {
     path: '/shops',
     route: shopRoute
+  },
+  {
+    path: '/categories',
+    route: categoryRoute
+  },
+  {
+    path: '/products',
+    route: productRoute
   }
 ];
 
