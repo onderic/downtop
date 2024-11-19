@@ -12,7 +12,12 @@ export const NewProductSchema = z.object({
   sellingPrice: z.number().positive('Selling price must be positive'),
   size: z.string().min(1, 'Size is required'),
   colors: z.array(z.string().min(1, 'Color is required')),
-  img: z.string().min(1, 'Image URL is required')
+  img: z.string().min(1, 'Image URL is required'),
+  shopId: z.string().min(1, 'Shop ID is required'),
+  categoryId: z
+    .number()
+    .int('Category ID must be an integer')
+    .positive('Category ID must be positive')
 });
 
 export const ProductSchema = NewProductSchema.extend({
@@ -21,9 +26,7 @@ export const ProductSchema = NewProductSchema.extend({
   updatedAt: z.date()
 });
 
-export const ProductUpdateDTOSchema = ProductSchema.partial().extend({
-  id: z.string()
-});
+export const ProductUpdateDTOSchema = ProductSchema.partial().extend({});
 
 export type NewProduct = z.infer<typeof NewProductSchema>;
 export type Product = z.infer<typeof ProductSchema>;
