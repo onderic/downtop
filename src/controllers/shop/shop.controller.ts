@@ -7,6 +7,7 @@ import { reqUser } from '../../types/request.types';
 
 const createShop = catchAsync(async (req, res) => {
   const { name, desc, street, businessType, buildingName, shopNumber, userId } = req.body;
+
   const user = await userService.getUser({ id: userId });
 
   if (!user) {
@@ -64,6 +65,7 @@ const getShops = catchAsync(async (req, res) => {
     businessType,
     buildingName,
     name
+
   } = req.query as QueryParams;
   const result = await shopService.getShops({
     limit: parseInt(limit, 10),

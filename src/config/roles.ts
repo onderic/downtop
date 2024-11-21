@@ -16,6 +16,7 @@ const allRoles = {
     'getProduct',
     'updateProduct',
     'deleteProduct'
+
   ],
   [Role.seller]: [
     'createShop',

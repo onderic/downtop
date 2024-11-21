@@ -85,6 +85,7 @@ const getShops = async ({
   if (name) {
     where.name = name;
   }
+
   if (street) {
     where.street = street;
   }
