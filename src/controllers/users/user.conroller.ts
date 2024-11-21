@@ -3,6 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import { userService } from '../../services';
 import { Role } from '@prisma/client';
 import ApiError from '../../utils/ApiError';
+import exclude from '../../utils/exclude';
+import { User } from '../../types/user.types';
 
 const createUser = catchAsync(async (req, res) => {
   const { phone, password, username, role } = req.body;
@@ -42,8 +44,12 @@ const getAllUsers = catchAsync(async (req, res) => {
 
 const getUser = catchAsync(async (req, res) => {
   const { userId } = req.params;
-  const user = await userService.getUser(userId);
-  res.send(user);
+  console.log('userId', userId);
+  const user = await userService.getUser({ id: userId });
+  console.log('user', user?.id);
+
+  const safeUser = exclude(user, ['password'] as (keyof typeof user)[]);
+  res.send(safeUser);
 });
 
 const deleteUser = catchAsync(async (req, res) => {
