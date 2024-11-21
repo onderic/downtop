@@ -57,6 +57,7 @@ const getShops = async ({
   street,
   businessType,
   buildingName,
+  name,
   startDate,
   endDate
 }: {
@@ -65,6 +66,7 @@ const getShops = async ({
   street?: string;
   businessType?: string;
   buildingName?: string;
+  name?: string;
   startDate?: string;
   endDate?: string;
 }): Promise<{
@@ -80,6 +82,9 @@ const getShops = async ({
   }
 
   const where: any = {};
+  if (name) {
+    where.name = name;
+  }
 
   if (street) {
     where.street = street;

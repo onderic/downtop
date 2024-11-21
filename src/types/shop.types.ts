@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const NewShopSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
   desc: z.string().min(1, 'Description is required'),
   street: z.string().min(1, 'Street is required'),
   businessType: z.string().min(1, 'Business type is required'),

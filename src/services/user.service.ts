@@ -28,7 +28,10 @@ const createUser = async (userData: NewUser): Promise<Omit<User, 'password'>> =>
   return safeUser;
 };
 
-const updateUser = async (userId: string, updateProfileDto: UserUpdateDTO): Promise<void> => {
+const updateUser = async (
+  userId: string,
+  updateProfileDto: UserUpdateDTO
+): Promise<Omit<User, 'password'>> => {
   const user = await getUser({ id: userId });
 
   if (!user) {
@@ -46,10 +49,13 @@ const updateUser = async (userId: string, updateProfileDto: UserUpdateDTO): Prom
     updateData.password = hashedNewPassword;
   }
 
-  await prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: updateData
   });
+
+  const safeUser = exclude(updatedUser, ['password']);
+  return safeUser;
 };
 
 const deleteUser = async (userId: string): Promise<void> => {

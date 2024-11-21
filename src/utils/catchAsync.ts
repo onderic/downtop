@@ -12,7 +12,10 @@ const catchAsync =
     res: Response<any, Record<string, any>, number>,
     next: NextFunction
   ) => {
-    Promise.resolve(fn(req, res, next)).catch((err) => next(err));
+    Promise.resolve(fn(req, res, next)).catch((err) => {
+      res.status(err.statusCode || 500).json({ message: err.message });
+      next(err);
+    });
   };
 
 export default catchAsync;
