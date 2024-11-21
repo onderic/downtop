@@ -6,7 +6,7 @@ import { userService } from '../../services';
 import { reqUser } from '../../types/request.types';
 
 const createShop = catchAsync(async (req, res) => {
-  const { desc, street, businessType, buildingName, shopNumber, userId } = req.body;
+  const { name, desc, street, businessType, buildingName, shopNumber, userId } = req.body;
   const user = await userService.getUser({ id: userId });
 
   if (!user) {
@@ -14,6 +14,7 @@ const createShop = catchAsync(async (req, res) => {
   }
 
   const shop = await shopService.createShop({
+    name,
     desc,
     street,
     businessType,
@@ -50,6 +51,7 @@ const getShops = catchAsync(async (req, res) => {
     street?: string;
     businessType?: string;
     buildingName?: string;
+    name?: string;
     endDate?: string;
     startDate?: string;
   }
@@ -60,7 +62,8 @@ const getShops = catchAsync(async (req, res) => {
     startDate,
     street,
     businessType,
-    buildingName
+    buildingName,
+    name
   } = req.query as QueryParams;
   const result = await shopService.getShops({
     limit: parseInt(limit, 10),
@@ -69,7 +72,8 @@ const getShops = catchAsync(async (req, res) => {
     endDate,
     street,
     businessType,
-    buildingName
+    buildingName,
+    name
   });
   res.send(result);
 });
