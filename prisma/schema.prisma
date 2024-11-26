@@ -20,56 +20,66 @@ model User {
   updatedAt DateTime @updatedAt
   tokens    Token[]  @relation
   shops     Shop[]   @relation
+  otp       Otp[]    @relation
 }
 
 model Shop {
-  id            String   @id @default(uuid())
-  name          String
-  desc          String
-  street        String
-  businessType  String
-  buildingName  String
-  shopNumber    String
-  userId        String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  user          User     @relation(fields: [userId], references: [id])
-  products      Product[] @relation
+  id           String    @id @default(uuid())
+  name         String
+  desc         String
+  street       String
+  businessType String
+  buildingName String
+  shopNumber   String
+  userId       String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id])
+  products     Product[] @relation
 }
 
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String
-  products      Product[] @relation
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[] @relation
 }
 
 model Product {
-  id            String   @id @default(uuid())
-  categoryId    Int
-  name          String
-  quantity      Int
-  minPurchase   Int
-  description   String
-  brand         String
-  mktPrice      Float
-  sellingPrice  Float
-  size          String
-  colors        String[]
-  img           String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  shopId        String
-  shop          Shop     @relation(fields: [shopId], references: [id])
-  category      Category @relation(fields: [categoryId], references: [id])
+  id           String   @id @default(uuid())
+  categoryId   Int
+  name         String
+  quantity     Int
+  minPurchase  Int
+  description  String
+  brand        String
+  mktPrice     Float
+  sellingPrice Float
+  size         String
+  colors       String[]
+  img          String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  shopId       String
+  shop         Shop     @relation(fields: [shopId], references: [id])
+  category     Category @relation(fields: [categoryId], references: [id])
 }
 
 model Token {
-  id          String   @id @default(uuid())
-  userId      String
-  token       String
-  createdAt   DateTime @default(now())
-  expiresAt   DateTime
-  user        User     @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  userId    String
+  token     String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  otp       String
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 enum Role {

@@ -14,8 +14,9 @@ const loginUser = async (loginData: Login): Promise<AuthResponse> => {
   }
 
   const safeUser = exclude(user, ['password']);
+  const otp = await tokenService.generateOTP(user.id);
+  tokenService.sendOTP(user.phone, otp);
   const tokens = await tokenService.genAuthtokens(user.id);
-
   return { user: safeUser, tokens: tokens };
 };
 
