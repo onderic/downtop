@@ -8,13 +8,13 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('createShop'), validate(NewShopSchema), shopController.createShop)
+  .post(auth('createShop', 'admin'), validate(NewShopSchema), shopController.createShop)
   .get(shopController.getShops);
 
 router
   .route('/:shopId')
   .get(shopController.getShop)
-  .put(auth('updateShop'), validate(ShopUpdateDTOSchema), shopController.updateShop)
-  .delete(auth('deleteShop'), shopController.deleteShop);
+  .put(auth('updateShop', 'admin'), validate(ShopUpdateDTOSchema), shopController.updateShop)
+  .delete(auth('deleteShop', 'admin'), shopController.deleteShop);
 
 export default router;
