@@ -2,21 +2,7 @@ import { Role } from '@prisma/client';
 
 const allRoles = {
   [Role.buyer]: ['getShop'],
-  [Role.admin]: [
-    'getAllUsers',
-    'manageUsers',
-    'createCategory',
-    'updateCategory',
-    'deleteCategory',
-    'createShop',
-    'getShop',
-    'updateShop',
-    'deleteShop',
-    'createProduct',
-    'getProduct',
-    'updateProduct',
-    'deleteProduct'
-  ],
+  [Role.admin]: ['admin'],
   [Role.seller]: [
     'createShop',
     'getShop',
