@@ -8,13 +8,21 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('createCategory'), validate(NewCategorySchema), categoryController.createCategory)
+  .post(
+    auth('createCategory', 'admin'),
+    validate(NewCategorySchema),
+    categoryController.createCategory
+  )
   .get(categoryController.getAllCategories);
 
 router
   .route('/:categoryId')
   .get(categoryController.getCategoryById)
-  .put(auth('updateCategory'), validate(CategoryUpdateDTOSchema), categoryController.updateCategory)
+  .put(
+    auth('updateCategory', 'admin'),
+    validate(CategoryUpdateDTOSchema),
+    categoryController.updateCategory
+  )
   .delete(auth('deleteCategory'), categoryController.deleteCategory);
 
 export default router;
