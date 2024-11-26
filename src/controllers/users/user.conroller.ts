@@ -4,7 +4,6 @@ import { userService } from '../../services';
 import { Role } from '@prisma/client';
 import ApiError from '../../utils/ApiError';
 import exclude from '../../utils/exclude';
-import { User } from '../../types/user.types';
 
 const createUser = catchAsync(async (req, res) => {
   const { phone, password, username, role } = req.body;
