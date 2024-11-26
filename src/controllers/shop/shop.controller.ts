@@ -65,7 +65,6 @@ const getShops = catchAsync(async (req, res) => {
     businessType,
     buildingName,
     name
-
   } = req.query as QueryParams;
   const result = await shopService.getShops({
     limit: parseInt(limit, 10),
