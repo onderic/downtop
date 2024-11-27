@@ -12,6 +12,7 @@ import { authLimiter } from './middlewares/rateLimiter';
 import { errorConverter, errorHandler } from './middlewares/error';
 import ApiError from './utils/ApiError';
 import routes from './routes/v1';
+import './eventHandlers';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use(cors());
 app.options('*', cors());
 
 app.use(passport.initialize());
+
 passport.use(passportStrategy);
 
 app.use('/v1', routes);

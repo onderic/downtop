@@ -5,6 +5,8 @@ import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 import prisma from '../client';
 import axios from 'axios';
+import logger from '../config/logger';
+
 const generateToken = async (userId: string, type: TokenTypes): Promise<string> => {
   const exp =
     Math.floor(Date.now() / 1000) +
@@ -44,6 +46,7 @@ const saveToken = async (
     }
   });
 };
+
 const deleteToken = async (userId: string, refreshToken: string): Promise<void> => {
   const tokenDoc = await prisma.token.findFirst({
     where: {
@@ -73,36 +76,55 @@ const verifyToken = (token: string): JwtPayload => {
 };
 
 const generateOTP = async (userId: string): Promise<string> => {
-  const otp_token = Math.floor(1000 + Math.random() * 9000);
-  const otp = otp_token.toString();
-  prisma.otp.create({
+  const otp_token = Math.floor(1000 + Math.random() * 9000).toString();
+  await prisma.otp.deleteMany({
+    where: {
+      userId: userId
+    }
+  });
+  await prisma.otp.create({
     data: {
-      otp: otp,
+      otp: otp_token,
       userId: userId,
       expiresAt: new Date(Date.now() + 5 * 60 * 1000)
     }
   });
 
-  return otp;
+  return otp_token;
 };
 
-const sendOTP = async (phone: string, otp: string): Promise<void> => {
-  const message = `Your OTP is ${otp}.It is valid for 5 minutes. Please do not share it with anyone.`;
+const sendOTP = async (phone: string, otp: string): Promise<boolean> => {
+  const message = `Your OTP is ${otp}. It is valid for 5 minutes. Please do not share it with anyone.`;
+
   const payload = {
     mobile: phone,
-    message: message,
+    message,
     apikey: config.advanta.apiKey,
     partnerID: config.advanta.partnerId,
     shortcode: config.advanta.shortcode
   };
 
-  const response = await axios.post(config.advanta.apiUrl, payload);
-  if (response.statusText !== 'OK') {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error sending OTP');
-  }
+  try {
+    const response = await axios.post(config.advanta.apiUrl, payload);
 
-  if (response.data.responses[0]['response-description'] !== 'Success') {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Error sending OTP');
+    if (
+      response.status !== 200 ||
+      response.data.responses[0]['response-description'] !== 'Success'
+    ) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      logger.error('SMS API error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
+    } else {
+      logger.error('Unexpected error:', error);
+    }
+    return false;
   }
 };
 
@@ -128,6 +150,7 @@ const verifyOTP = async (userId: string, otp: string): Promise<void> => {
     }
   });
 };
+
 export default {
   generateToken,
   verifyToken,

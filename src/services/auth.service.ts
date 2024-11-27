@@ -5,6 +5,7 @@ import tokenService from './token.service';
 import { AuthResponse, JwtTokens, Login } from '../types/auth.types';
 import { getUser } from './user.service';
 import exclude from '../utils/exclude';
+import { eventEmitter } from '../utils/events';
 
 const loginUser = async (loginData: Login): Promise<AuthResponse> => {
   const user = await getUser({ phone: loginData.phone });
@@ -15,7 +16,7 @@ const loginUser = async (loginData: Login): Promise<AuthResponse> => {
 
   const safeUser = exclude(user, ['password']);
   const otp = await tokenService.generateOTP(user.id);
-  tokenService.sendOTP(user.phone, otp);
+  eventEmitter.emit('sendOTP', { phone: user.phone, otp });
   const tokens = await tokenService.genAuthtokens(user.id);
   return { user: safeUser, tokens: tokens };
 };
