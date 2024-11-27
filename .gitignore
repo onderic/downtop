@@ -22,3 +22,7 @@ build
 
 
 prisma/migrations/
+
+# Logs
+src/logs/*
+!src/logs/.gitkeep
