@@ -1,8 +1,8 @@
 paths:
   /auth/login:
     post:
-      summary: Login a user
-      description: Logs in a user and returns authentication tokens
+      summary: Initiate login and trigger OTP
+      description: Validates credentials and triggers OTP generation if successful
       operationId: loginUser
       tags:
         - Auth
@@ -13,13 +13,43 @@ paths:
               $ref: '#/components/schemas/LoginSchema'
       responses:
         '200':
-          description: Successfully logged in
+          description: Credentials validated, OTP sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseSchema'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/verify-otp:
+    post:
+      summary: Verify OTP and complete login
+      description: Verifies the OTP and returns user data along with authentication tokens
+      operationId: verifyOTPtoken
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPSchema'
+      responses:
+        '200':
+          description: OTP verified successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponseSchema'
         '401':
-          description: Invalid credentials
+          description: Invalid or expired OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /auth/logout:
     post:
@@ -77,14 +107,37 @@ components:
       properties:
         accessToken:
           type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         refreshToken:
           type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
     AuthResponseSchema:
       type: object
       properties:
         user:
-          $ref: '#/components/schemas/SafeUser'
+          type: object
+          properties:
+            id:
+              type: string
+              example: "f2cc21e6-63d0-45c8-9a90-47daf3db4935"
+            username:
+              type: string
+              example: "onderi"
+            phone:
+              type: string
+              example: "0798335657"
+            role:
+              type: string
+              example: "seller"
+            createdAt:
+              type: string
+              format: date-time
+              example: "2024-11-26T10:33:09.546Z"
+            updatedAt:
+              type: string
+              format: date-time
+              example: "2024-11-26T10:33:09.546Z"
         tokens:
           $ref: '#/components/schemas/JwtTokenSchema'
 
@@ -95,3 +148,46 @@ components:
           type: string
       required:
         - refreshToken
+
+    VerifyOTPSchema:
+      type: object
+      properties:
+        phone:
+          type: string
+          description: The user's phone number
+          example: "0798335657"
+        otp:
+          type: string
+          description: The OTP code sent to user's phone
+          example: "7335"
+      required:
+        - phone
+        - otp
+
+    OTPResponseSchema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if OTP was sent successfully
+        message:
+          type: string
+          description: Status message about OTP delivery
+
+    LoginResponseSchema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "user available"
+          description: Confirmation message indicating successful credential validation
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Invalid credentials"

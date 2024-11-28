@@ -4,8 +4,6 @@ import { Request, Response } from 'express';
 import authService from '../../services/auth.service';
 import tokenService from '../../services/token.service';
 import { Login } from '../../types/auth.types';
-import userService from '../../services/user.service';
-import exclude from '../../utils/exclude';
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const loginData: Login = req.body;
@@ -14,16 +12,10 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   res.status(httpStatus.OK).json({ message: 'user available' });
 });
 
-const verifyOTPtoken = catchAsync(async (req: Request, res: Response) => {
+const verifyOTPToken = catchAsync(async (req: Request, res: Response) => {
   const { phone, otp } = req.body;
-  const user = await userService.getUser({ phone: phone });
-  if (!user) {
-    return;
-  }
-  await tokenService.verifyOTP(user?.id, otp);
-  const tokens = await tokenService.genAuthtokens(user.id);
-  const userWithoutPassword = exclude(user, ['password']);
-  res.status(httpStatus.OK).json({ user: userWithoutPassword, tokens });
+  const user = await tokenService.verifyOTP(phone, otp);
+  res.status(httpStatus.OK).json(user);
 });
 
 const logoutUser = catchAsync(async (req: Request, res: Response) => {
@@ -42,5 +34,5 @@ export default {
   loginUser,
   logoutUser,
   refreshToken,
-  verifyOTPtoken
+  verifyOTPToken
 };
