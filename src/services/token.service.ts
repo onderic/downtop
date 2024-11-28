@@ -6,6 +6,7 @@ import httpStatus from 'http-status';
 import prisma from '../client';
 import axios from 'axios';
 import logger from '../config/logger';
+import exclude from '../utils/exclude';
 
 const generateToken = async (userId: string, type: TokenTypes): Promise<string> => {
   const exp =
@@ -94,11 +95,9 @@ const generateOTP = async (userId: string): Promise<string> => {
 };
 
 const sendOTP = async (phone: string, otp: string): Promise<boolean> => {
-  const message = `Your OTP is ${otp}. It is valid for 5 minutes. Please do not share it with anyone.`;
-
   const payload = {
     mobile: phone,
-    message,
+    message: `Your OTP is ${otp}. It is valid for 5 minutes. Please do not share it with anyone.`,
     apikey: config.advanta.apiKey,
     partnerID: config.advanta.partnerId,
     shortcode: config.advanta.shortcode
@@ -128,10 +127,18 @@ const sendOTP = async (phone: string, otp: string): Promise<boolean> => {
   }
 };
 
-const verifyOTP = async (userId: string, otp: string): Promise<void> => {
+const verifyOTP = async (phone: string, otp: string) => {
+  const user = await prisma.user.findUnique({
+    where: { phone }
+  });
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
   const otpDoc = await prisma.otp.findFirst({
     where: {
-      userId: userId,
+      userId: user.id,
       otp: otp
     }
   });
@@ -141,15 +148,26 @@ const verifyOTP = async (userId: string, otp: string): Promise<void> => {
   }
 
   if (otpDoc.expiresAt < new Date()) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'OTP expired');
+    throw new ApiError(httpStatus.GONE, 'OTP has expired. Please request a new one.');
   }
 
+  // Delete the OTP after verification
   await prisma.otp.delete({
     where: {
       id: otpDoc.id
     }
   });
+
+  // Generate tokens and return user data
+  const tokens = await genAuthtokens(user.id);
+  const safeUser = exclude(user, ['id', 'password']);
+
+  return {
+    user: safeUser,
+    tokens
+  };
 };
+
 export default {
   generateToken,
   verifyToken,
