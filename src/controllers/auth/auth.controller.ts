@@ -7,8 +7,7 @@ import { Login } from '../../types/auth.types';
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const loginData: Login = req.body;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const user = await authService.loginUser(loginData);
+  await authService.loginUser(loginData);
   res.status(httpStatus.OK).json({ message: 'user available' });
 });
 
