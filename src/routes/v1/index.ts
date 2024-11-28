@@ -5,6 +5,7 @@ import docsRoute from './docs.route';
 import shopRoute from './shop.route';
 import categoryRoute from './category.route';
 import productRoute from './product.route';
+import cartRoute from './cart.route';
 const router = express.Router();
 
 const defaultRoutes = [
@@ -31,7 +32,8 @@ const defaultRoutes = [
   {
     path: '/products',
     route: productRoute
-  }
+  },
+  { path: '/cart', route: cartRoute }
 ];
 
 defaultRoutes.forEach((route) => {
