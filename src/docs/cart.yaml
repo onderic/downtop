@@ -1,0 +1,246 @@
+paths:
+  /cart:
+    post:
+      summary: Create a new cart
+      description: Creates a new cart for a user
+      operationId: createCart
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Cart created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique ID of the cart
+                  userId:
+                    type: string
+                    description: The ID of the user who owns the cart
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: Unauthorized
+
+  /cart/{cartId}:
+    get:
+      summary: Get a cart
+      description: Retrieves a cart by ID
+      operationId: getCart
+      tags:
+        - Cart
+      parameters:
+        - in: path
+          name: cartId
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+      responses:
+        '200':
+          description: Successfully retrieved cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique ID of the cart
+                  userId:
+                    type: string
+                    description: The ID of the user who owns the cart
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique ID of the cart item
+                        CartId:
+                          type: string
+                          description: The ID of the cart
+                        ProductId:
+                          type: string
+                          description: The ID of the product
+                        quantity:
+                          type: integer
+                          description: The quantity of the product in the cart
+                        amount:
+                          type: number
+                          description: The total amount for this cart item
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+        '404':
+          description: Cart not found
+
+    patch:
+      summary: Update a cart item
+      description: Updates an existing item in the cart
+      operationId: updateCartItem
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cartItemId:
+                  type: string
+                  description: The ID of the cart item to update
+                quantity:
+                  type: integer
+                  description: The new quantity for the cart item
+              required:
+                - cartItemId
+                - quantity
+      responses:
+        '200':
+          description: Cart item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique ID of the cart item
+                  CartId:
+                    type: string
+                    description: The ID of the cart
+                  ProductId:
+                    type: string
+                    description: The ID of the product
+                  quantity:
+                    type: integer
+                    description: The updated quantity of the product in the cart
+                  amount:
+                    type: number
+                    description: The total amount for this cart item
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+        '400':
+          description: Bad request
+        '404':
+          description: Cart item not found
+
+    delete:
+      summary: Delete a cart item
+      description: Deletes an item from the cart
+      operationId: deleteCartItem
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+      responses:
+        '204':
+          description: Cart item deleted successfully
+        '404':
+          description: Cart item not found
+
+  /cart/clear/{cartId}:
+    delete:
+      summary: Clear the cart
+      description: Removes all items from the cart
+      operationId: clearCart
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+      responses:
+        '204':
+          description: Cart cleared successfully
+        '404':
+          description: Cart not found
+
+components:
+  schemas:
+    CartSchema:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique ID of the cart
+        userId:
+          type: string
+          description: The ID of the user who owns the cart
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The unique ID of the cart item
+              CartId:
+                type: string
+                description: The ID of the cart
+              ProductId:
+                type: string
+                description: The ID of the product
+              quantity:
+                type: integer
+                description: The quantity of the product in the cart
+              amount:
+                type: number
+                description: The total amount for this cart item
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

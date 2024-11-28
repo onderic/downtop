@@ -150,7 +150,6 @@ const verifyOTP = async (userId: string, otp: string): Promise<void> => {
     }
   });
 };
-
 export default {
   generateToken,
   verifyToken,
