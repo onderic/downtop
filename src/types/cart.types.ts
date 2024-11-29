@@ -2,8 +2,8 @@ import { Product } from '@prisma/client';
 import { z } from 'zod';
 
 export const newCartItem = z.object({
-  CartId: z.string(),
-  ProductId: z.string(),
+  cartId: z.string(),
+  productId: z.string(),
   quantity: z.number()
 });
 export const CartItem = newCartItem.extend({
@@ -13,10 +13,11 @@ export const CartItem = newCartItem.extend({
   updatedAt: z.date()
 });
 
-export const updateCartItemDTO = CartItem.pick({
-  id: true,
-  quantity: true
+export const updateCartItemDTO = z.object({
+  cartItemId: z.string(),
+  quantity: z.number()
 });
+
 export const Cart = z.object({
   id: z.string(),
   userId: z.string(),

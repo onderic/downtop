@@ -11,9 +11,12 @@ router.route('/').post(auth(), cartController.createCart);
 router
   .route('/:cartId')
   .post(auth(), validate(newCartItem), cartController.addCartItem)
+  .get(auth(), cartController.getCart);
+router
+  .route('/items/:cartItemId')
   .patch(auth(), validate(updateCartItemDTO), cartController.updateCartItem)
-  .get(auth(), cartController.getCart)
   .delete(auth(), cartController.deleteCartItem);
-router.route('/clear/:cartId').delete(auth(), cartController.clearCart);
+
+router.route('/clear/:cartId').put(auth(), cartController.clearCart);
 
 export default router;

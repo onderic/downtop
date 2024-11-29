@@ -36,7 +36,7 @@ const updateCartItem = catchAsync(async (req, res) => {
   const user = req.user as reqUser;
   const cartItem = await CartService.updateCartItem(
     user.id,
-    req.body.cartItemId,
+    req.params.cartItemId,
     req.body.quantity
   );
   res.send(cartItem);
