@@ -9,12 +9,13 @@ import logger from '../config/logger';
 import exclude from '../utils/exclude';
 
 const generateToken = async (userId: string, type: TokenTypes): Promise<string> => {
+  const now = Math.floor(Date.now() / 1000);
   const exp =
-    Math.floor(Date.now() / 1000) +
+    now +
     (type === 'access'
       ? config.jwt.accessExpirationMinutes * 60
       : config.jwt.refreshExpirationDays * 24 * 60 * 60);
-  const iat = Math.floor(Date.now() / 1000);
+  const iat = now;
   const payload: JwtPayload = {
     id: userId,
     iat: iat,

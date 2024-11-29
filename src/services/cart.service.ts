@@ -23,8 +23,8 @@ const createCart = async (userId: string): Promise<Cart> => {
 };
 
 const getCart = async (userId: string, cartId: string): Promise<CartWithItemsAndProducts> => {
-  const existingCart = await prisma.cart.findUnique({
-    where: { id: cartId, userId },
+  const existingCart = await prisma.cart.findFirst({
+    where: { id: cartId, userId: userId },
     include: {
       items: {
         include: {
@@ -39,8 +39,8 @@ const getCart = async (userId: string, cartId: string): Promise<CartWithItemsAnd
 
   const items: CartItemWithProduct[] = existingCart.items.map((item) => ({
     id: item.id,
-    CartId: item.cartId,
-    ProductId: item.productId,
+    cartId: item.cartId,
+    productId: item.productId,
     quantity: item.quantity,
     amount: item.amount,
     createdAt: item.createdAt,
@@ -58,6 +58,7 @@ const getCart = async (userId: string, cartId: string): Promise<CartWithItemsAnd
 
   return cart;
 };
+
 const clearCart = async (userId: string, cartId: string): Promise<void> => {
   const cart = await getCart(userId, cartId);
   if (!cart) {
@@ -79,6 +80,14 @@ const addCartItem = async (
   if (!cart) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Unauthorized to add items to this cart');
   }
+
+  const existingCartItem = await prisma.cartItem.findFirst({
+    where: { cartId, productId }
+  });
+  if (existingCartItem) {
+    return existingCartItem;
+  }
+
   const product = await productService.getProduct(productId);
   if (quantity <= 0 || quantity > product.quantity) {
     throw new ApiError(
@@ -108,7 +117,7 @@ const updateCartItem = async (
   if (quantity <= 0 || quantity > existingCartItem.product.quantity) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      `Quantity must be greater than zero and not exceed ${existingCartItem.product} units of ${existingCartItem.product.name}.`
+      `Product may be out of stock or quantity is invalid`
     );
   }
 
@@ -127,7 +136,7 @@ const deleteCartItem = async (userId: string, cartItemId: string): Promise<void>
 };
 
 const getCartItem = async (userId: string, cartItemId: string): Promise<CartItemWithProduct> => {
-  const existingCartItem = await prisma.cartItem.findUnique({
+  const existingCartItem = await prisma.cartItem.findFirst({
     where: { id: cartItemId },
     include: {
       product: true,
@@ -147,8 +156,8 @@ const getCartItem = async (userId: string, cartItemId: string): Promise<CartItem
 
   const cartItem: CartItemWithProduct = {
     id: existingCartItem.id,
-    CartId: existingCartItem.cartId,
-    ProductId: existingCartItem.productId,
+    cartId: existingCartItem.cartId,
+    productId: existingCartItem.productId,
     quantity: existingCartItem.quantity,
     amount: existingCartItem.amount,
     createdAt: existingCartItem.createdAt,
@@ -159,21 +168,12 @@ const getCartItem = async (userId: string, cartItemId: string): Promise<CartItem
   return cartItem;
 };
 
-const getCartItems = async (userId: string, cartId: string): Promise<CartItem[]> => {
-  const cartItems = await prisma.cartItem.findMany({
-    where: { cartId },
-    include: { product: true }
-  });
-  return cartItems;
-};
-
 export default {
   createCart,
   getCart,
   addCartItem,
   updateCartItem,
   deleteCartItem,
-  getCartItems,
   getCartItem,
   clearCart
 };
