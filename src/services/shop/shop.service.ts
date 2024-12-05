@@ -1,8 +1,8 @@
 import { Shop } from '@prisma/client';
 import httpStatus from 'http-status';
-import prisma from '../client';
-import ApiError from '../utils/ApiError';
-import { NewShop, ShopUpdateDTO } from '../types/shop.types';
+import prisma from '../../client';
+import ApiError from '../../utils/ApiError';
+import { NewShop, ShopUpdateDTO } from '../../types/shop.types';
 
 const createShop = async (shopData: NewShop): Promise<Shop> => {
   const shop = await prisma.shop.create({

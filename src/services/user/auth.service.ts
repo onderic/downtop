@@ -1,10 +1,10 @@
 import httpStatus from 'http-status';
-import ApiError from '../utils/ApiError';
-import { isPasswordMatch } from '../utils/encryption';
+import ApiError from '../../utils/ApiError';
+import { isPasswordMatch } from '../../utils/encryption';
 import tokenService from './token.service';
-import { JwtTokens, Login } from '../types/auth.types';
-import { getUser } from './user.service';
-import { eventEmitter } from '../utils/events';
+import { JwtTokens, Login } from '../../types/auth.types';
+import { getUser } from '../user/user.service';
+import { eventEmitter } from '../../utils/events';
 
 const loginUser = async (loginData: Login): Promise<void> => {
   const user = await getUser({ phone: loginData.phone });

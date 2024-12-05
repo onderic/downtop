@@ -1,8 +1,8 @@
 import { Product } from '@prisma/client';
 import httpStatus from 'http-status';
-import prisma from '../client';
-import ApiError from '../utils/ApiError';
-import { NewProduct, ProductUpdateDTO } from '../types/product.types';
+import prisma from '../../client';
+import ApiError from '../../utils/ApiError';
+import { NewProduct, ProductUpdateDTO } from '../../types/product.types';
 
 const createProduct = async (productData: NewProduct): Promise<Product> => {
   const product = await prisma.product.create({

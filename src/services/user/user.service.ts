@@ -1,10 +1,10 @@
 import { Role, User } from '@prisma/client';
 import httpStatus from 'http-status';
-import prisma from '../client';
-import ApiError from '../utils/ApiError';
-import { encryptPassword } from '../utils/encryption';
-import { NewUser, UserUpdateDTO, SafeUser } from '../types/user.types';
-import exclude from '../utils/exclude';
+import prisma from '../../client';
+import ApiError from '../../utils/ApiError';
+import { encryptPassword } from '../../utils/encryption';
+import { NewUser, UserUpdateDTO, SafeUser } from '../../types/user.types';
+import exclude from '../../utils/exclude';
 
 const createUser = async (userData: NewUser): Promise<Omit<User, 'password'>> => {
   const role = userData.role as Role;

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 export const NewShopSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  desc: z.string().min(1, 'Description is required'),
-  street: z.string().min(1, 'Street is required'),
-  businessType: z.string().min(1, 'Business type is required'),
-  buildingName: z.string().min(1, 'Building name is required'),
-  shopNumber: z.string().min(1, 'Shop number is required'),
-  userId: z.string().uuid('Invalid user ID')
+  name: z.string().min(1, { message: 'Name is required' }),
+  desc: z.string().min(1, { message: 'Description is required' }),
+  street: z.string().min(1, { message: 'Street is required' }),
+  businessType: z.string().min(1, { message: 'Business type is required' }),
+  buildingName: z.string().min(1, { message: 'Building name is required' }),
+  shopNumber: z.string().min(1, { message: 'Shop number is required' }),
+  userId: z.string().uuid({ message: 'Invalid user ID' })
 });
 
 export const ShopSchema = NewShopSchema.extend({

@@ -1,9 +1,9 @@
 import productService from './product.service';
 import httpStatus from 'http-status';
-import prisma from '../client';
+import prisma from '../../client';
 import { Cart, CartItem } from '@prisma/client';
-import ApiError from '../utils/ApiError';
-import { CartItemWithProduct, CartWithItemsAndProducts } from '../types/cart.types';
+import ApiError from '../../utils/ApiError';
+import { CartItemWithProduct, CartWithItemsAndProducts } from '../../types/cart.types';
 
 const createCart = async (userId: string): Promise<Cart> => {
   const existingCart = await prisma.cart.findFirst({

@@ -1,8 +1,8 @@
-import { cartController } from '../../controllers';
+import { cartController } from '../../../controllers';
 import express from 'express';
-import validate from '../../middlewares/validate';
-import auth from '../../middlewares/auth';
-import { newCartItem, updateCartItemDTO } from '../../types/cart.types';
+import validate from '../../../middlewares/validate';
+import auth from '../../../middlewares/auth';
+import { newCartItem, updateCartItemDTO } from '../../../types/cart.types';
 
 const router = express.Router();
 

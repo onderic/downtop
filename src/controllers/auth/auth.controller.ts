@@ -1,8 +1,8 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import { Request, Response } from 'express';
-import authService from '../../services/auth.service';
-import tokenService from '../../services/token.service';
+import authService from '../../services/user/auth.service';
+import tokenService from '../../services/user/token.service';
 import { Login } from '../../types/auth.types';
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
