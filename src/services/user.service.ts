@@ -17,14 +17,24 @@ const createUser = async (userData: NewUser): Promise<Omit<User, 'password'>> =>
     throw new ApiError(httpStatus.BAD_REQUEST, 'User already exists');
   }
 
-  const newUser = await prisma.user.create({
-    data: {
-      ...userData,
-      password: await encryptPassword(userData.password)
-    }
+  const result = await prisma.$transaction(async (tx) => {
+    const newUser = await tx.user.create({
+      data: {
+        ...userData,
+        password: await encryptPassword(userData.password)
+      }
+    });
+
+    await tx.cart.create({
+      data: {
+        userId: newUser.id
+      }
+    });
+
+    return newUser;
   });
 
-  const safeUser = exclude(newUser, ['password']);
+  const safeUser = exclude(result, ['password']);
   return safeUser;
 };
 
