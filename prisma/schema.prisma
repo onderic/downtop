@@ -29,7 +29,7 @@ model Shop {
   name         String
   desc         String
   street       String
-  businessType String
+  businessType BusinessType
   buildingName String
   shopNumber   String
   userId       String
@@ -109,4 +109,9 @@ enum Role {
   admin
   seller
   buyer
+}
+
+enum  BusinessType {
+  retail
+  wholesale
 }
