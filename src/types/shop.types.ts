@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BusinessType } from '@prisma/client'; // Import the Role enum from Prisma
+import { BusinessType } from '@prisma/client';
 
 export const NewShopSchema = z.object({
   name: z.string().min(1, 'Name is required'),

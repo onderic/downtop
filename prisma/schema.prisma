@@ -21,6 +21,7 @@ model User {
   tokens    Token[]  @relation
   shops     Shop[]   @relation
   otp       Otp[]    @relation
+  orders         Order[]       @relation("UserOrders")
   Cart      Cart[]
 }
 
@@ -64,6 +65,7 @@ model Product {
   shop         Shop       @relation(fields: [shopId], references: [id])
   category     Category   @relation(fields: [categoryId], references: [id])
   CartItem     CartItem[]
+  orderItems     OrderItem[]
 }
 
 model Token {
@@ -105,6 +107,34 @@ model CartItem {
   updatedAt DateTime @updatedAt
 }
 
+model Order {
+  id             String        @id @default(uuid())
+  userId         String
+  user           User          @relation("UserOrders", fields: [userId], references: [id])
+  orderItems     OrderItem[]
+  totalAmount    Float
+  status         OrderStatus   @default(PENDING)
+  placedAt       DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model OrderItem {
+  id         String    @id @default(uuid())
+  orderId    String
+  order      Order     @relation(fields: [orderId], references: [id])
+  productId  String
+  product    Product   @relation(fields: [productId], references: [id])
+  quantity   Int
+  totalPrice Float
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
 enum Role {
   admin
   seller

@@ -1,8 +1,8 @@
-import { userController } from '../../controllers';
+import { userController } from '../../../controllers';
 import express from 'express';
-import validate from '../../middlewares/validate';
-import { newUserSchema, userUpdateDTOSchema } from '../../types/user.types';
-import auth from '../../middlewares/auth';
+import validate from '../../../middlewares/validate';
+import { newUserSchema, userUpdateDTOSchema } from '../../../types/user.types';
+import auth from '../../../middlewares/auth';
 
 const router = express.Router();
 

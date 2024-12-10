@@ -1,12 +1,12 @@
-import { JwtPayload, JwtTokens, TokenTypes } from '../types/auth.types';
+import { JwtPayload, JwtTokens, TokenTypes } from '../../types/auth.types';
 import jwt from 'jsonwebtoken';
-import config from '../config/config';
-import ApiError from '../utils/ApiError';
+import config from '../../config/config';
+import ApiError from '../../utils/ApiError';
 import httpStatus from 'http-status';
-import prisma from '../client';
+import prisma from '../../client';
 import axios from 'axios';
-import logger from '../config/logger';
-import exclude from '../utils/exclude';
+import logger from '../../config/logger';
+import exclude from '../../utils/exclude';
 
 const generateToken = async (userId: string, type: TokenTypes): Promise<string> => {
   const now = Math.floor(Date.now() / 1000);

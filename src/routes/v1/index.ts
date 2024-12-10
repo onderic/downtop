@@ -1,11 +1,13 @@
 import express from 'express';
-import userRoute from './user.route';
-import authRoute from './auth.route';
+import userRoute from './user/user.route';
+import authRoute from './user/auth.route';
 import docsRoute from './docs.route';
-import shopRoute from './shop.route';
-import categoryRoute from './category.route';
-import productRoute from './product.route';
-import cartRoute from './cart.route';
+import shopRoute from './shop/shop.route';
+import categoryRoute from './product/category.route';
+import productRoute from './product/product.route';
+import cartRoute from './product/cart.route';
+import orderRoute from './product/order.route';
+
 const router = express.Router();
 
 const defaultRoutes = [
@@ -33,7 +35,14 @@ const defaultRoutes = [
     path: '/products',
     route: productRoute
   },
-  { path: '/cart', route: cartRoute }
+  {
+    path: '/cart',
+    route: cartRoute
+  },
+  {
+    path: '/orders',
+    route: orderRoute
+  }
 ];
 
 defaultRoutes.forEach((route) => {

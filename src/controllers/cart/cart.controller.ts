@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
-import CartService from '../../services/cart.service';
+import CartService from '../../services/product/cart.service';
 import { reqUser } from '../../types/request.types';
 
 const createCart = catchAsync(async (req, res) => {

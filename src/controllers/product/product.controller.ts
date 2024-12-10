@@ -1,8 +1,8 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import { productService } from '../../services';
-import shopService from '../../services/shop.service';
-import categoryService from '../../services/category.service';
+import shopService from '../../services/shop/shop.service';
+import categoryService from '../../services/product/category.service';
 
 const createProduct = catchAsync(async (req, res) => {
   const {

@@ -1,8 +1,8 @@
 import express from 'express';
-import { authController } from '../../controllers';
-import validate from '../../middlewares/validate';
-import { LoginSchema } from '../../types/auth.types';
-import { verifyOTPSchema } from '../../types/otp.types';
+import { authController } from '../../../controllers';
+import validate from '../../../middlewares/validate';
+import { LoginSchema } from '../../../types/auth.types';
+import { verifyOTPSchema } from '../../../types/otp.types';
 
 const router = express.Router();
 

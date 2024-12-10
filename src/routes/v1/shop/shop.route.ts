@@ -1,14 +1,14 @@
-import { shopController } from '../../controllers';
+import { shopController } from '../../../controllers';
 import express from 'express';
-import validate from '../../middlewares/validate';
-import { NewShopSchema, ShopUpdateDTOSchema } from '../../types/shop.types';
-import auth from '../../middlewares/auth';
+import validate from '../../../middlewares/validate';
+import { NewShopSchema, ShopUpdateDTOSchema } from '../../../types/shop.types';
+import auth from '../../../middlewares/auth';
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('createShop', 'admin'), validate(NewShopSchema), shopController.createShop)
+  .post(auth('createShop'), validate(NewShopSchema), shopController.createShop)
   .get(shopController.getShops);
 
 router
