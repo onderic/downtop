@@ -9,8 +9,7 @@ export const NewShopSchema = z.object({
     message: 'Business type must be either retail or wholesale'
   }),
   buildingName: z.string().min(1, 'Building name is required'),
-  shopNumber: z.string().min(1, 'Shop number is required'),
-  userId: z.string().uuid('Invalid user ID')
+  shopNumber: z.string().min(1, 'Shop number is required')
 });
 
 export const ShopSchema = NewShopSchema.extend({
@@ -21,7 +20,6 @@ export const ShopSchema = NewShopSchema.extend({
 
 export const ShopUpdateDTOSchema = ShopSchema.partial().extend({});
 
-// TypeScript types
-export type NewShop = z.infer<typeof NewShopSchema>;
+export type NewShop = z.infer<typeof NewShopSchema> & { userId: string };
 export type Shop = z.infer<typeof ShopSchema>;
 export type ShopUpdateDTO = z.infer<typeof ShopUpdateDTOSchema>;
