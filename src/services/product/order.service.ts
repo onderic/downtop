@@ -29,7 +29,8 @@ const createOrder = async (orderData: NewOrder): Promise<Order> => {
             orderId: newOrder.id,
             productId: item.productId,
             quantity: item.quantity,
-            totalPrice: item.quantity * product.sellingPrice
+            totalPrice: item.quantity * product.sellingPrice,
+            shopId: product.shopId
           }
         });
       })

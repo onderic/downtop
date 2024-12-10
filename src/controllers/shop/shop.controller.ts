@@ -2,16 +2,14 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import ApiError from '../../utils/ApiError';
 import { shopService } from '../../services';
-import { userService } from '../../services';
 import { reqUser } from '../../types/request.types';
 
 const createShop = catchAsync(async (req, res) => {
-  const { name, desc, street, businessType, buildingName, shopNumber, userId } = req.body;
+  const { name, desc, street, businessType, buildingName, shopNumber } = req.body;
+  const user = req.user as reqUser;
 
-  const user = await userService.getUser({ id: userId });
-
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  if (user.role !== 'seller' && user.role !== 'admin') {
+    throw new ApiError(httpStatus.FORBIDDEN, 'User is not authorized to create a shop');
   }
 
   const shop = await shopService.createShop({
@@ -21,7 +19,7 @@ const createShop = catchAsync(async (req, res) => {
     businessType,
     buildingName,
     shopNumber,
-    userId
+    userId: user.id
   });
   res.status(httpStatus.CREATED).send(shop);
 });
