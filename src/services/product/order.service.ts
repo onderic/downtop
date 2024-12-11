@@ -44,6 +44,19 @@ const createOrder = async (orderData: NewOrder): Promise<Order> => {
   return order;
 };
 
+const getShopOrders = async (shopId: string): Promise<Order[]> => {
+  return await prisma.order.findMany({
+    where: {
+      orderItems: {
+        some: {
+          shopId: shopId
+        }
+      }
+    },
+    include: { orderItems: true }
+  });
+};
+
 const getOrder = async (orderId: string): Promise<Order> => {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
@@ -65,5 +78,6 @@ const getAllOrders = async (): Promise<Order[]> => {
 export default {
   createOrder,
   getOrder,
-  getAllOrders
+  getAllOrders,
+  getShopOrders
 };

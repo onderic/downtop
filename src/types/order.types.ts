@@ -5,8 +5,7 @@ export const NewOrderSchema = z.object({
   orderItems: z.array(
     z.object({
       productId: z.string().uuid({ message: 'Invalid product ID format' }),
-      quantity: z.number().min(1, { message: 'Quantity must be at least 1' }),
-      totalPrice: z.number().positive({ message: 'Total price must be a positive number' })
+      quantity: z.number().min(1, { message: 'Quantity must be at least 1' })
     })
   )
 });
