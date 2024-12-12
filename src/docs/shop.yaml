@@ -163,6 +163,9 @@ components:
     NewShopSchema:
       type: object
       properties:
+        name:
+          type: string
+          description: Shop name
         desc:
           type: string
           description: Shop description
@@ -171,6 +174,7 @@ components:
           description: Street address
         businessType:
           type: string
+          enum: [retail, wholesale]
           description: Type of business
         buildingName:
           type: string
@@ -178,17 +182,13 @@ components:
         shopNumber:
           type: string
           description: Shop number
-        userId:
-          type: string
-          format: uuid
-          description: ID of the shop owner
       required:
+        - name
         - desc
         - street
         - businessType
         - buildingName
         - shopNumber
-        - userId
 
     ShopSchema:
       allOf:
@@ -198,22 +198,28 @@ components:
             id:
               type: string
               format: uuid
+              description: Shop ID
             createdAt:
               type: string
               format: date-time
+              description: Shop creation time
             updatedAt:
               type: string
               format: date-time
+              description: Last shop update time
 
     ShopUpdateDTOSchema:
       type: object
       properties:
+        name:
+          type: string
         desc:
           type: string
         street:
           type: string
         businessType:
           type: string
+          enum: [retail, wholesale]
         buildingName:
           type: string
         shopNumber:

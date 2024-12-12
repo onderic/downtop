@@ -1,4 +1,4 @@
-import { Order, Product } from '@prisma/client';
+import { Order, OrderStatus, Product } from '@prisma/client';
 import httpStatus from 'http-status';
 import prisma from '../../client';
 import ApiError from '../../utils/ApiError';
@@ -44,28 +44,83 @@ const createOrder = async (orderData: NewOrder): Promise<Order> => {
   return order;
 };
 
-const getShopOrders = async (shopId: string): Promise<Order[]> => {
-  return await prisma.order.findMany({
-    where: {
-      orderItems: {
-        some: {
-          shopId: shopId
-        }
+const getShopOrders = async ({
+  shopId,
+  limit,
+  page,
+  totalAmount,
+  status
+}: {
+  shopId: string;
+  limit: number;
+  page: number;
+  totalAmount?: number;
+  status?: string;
+}): Promise<{
+  orders: Order[];
+  totalOrders: number;
+  totalPages: number;
+  hasNextPage: boolean;
+}> => {
+  const skip = (page - 1) * limit;
+
+  if (page < 1 || limit < 1) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Page and limit must be greater than 0');
+  }
+
+  const where: any = {
+    orderItems: {
+      some: {
+        shopId: shopId
       }
-    },
-    include: { orderItems: true }
+    }
+  };
+
+  if (totalAmount !== undefined) {
+    where.totalAmount = totalAmount;
+  }
+  if (status) {
+    where.status = status;
+  }
+
+  const totalOrders = await prisma.order.count({
+    where: where
   });
+
+  const totalPages = Math.ceil(totalOrders / limit);
+
+  // Fetch the orders with pagination
+  const orders = await prisma.order.findMany({
+    where: where,
+    skip,
+    take: limit,
+    include: { orderItems: true },
+    orderBy: { placedAt: 'desc' }
+  });
+  const hasNextPage = skip + limit < totalOrders;
+
+  return {
+    orders,
+    totalOrders,
+    totalPages,
+    hasNextPage
+  };
 };
 
 const getOrder = async (orderId: string): Promise<Order> => {
+  if (!orderId) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Order ID is required');
+  }
+
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { orderItems: true }
   });
 
   if (!order) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'order not found');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   }
+
   return order;
 };
 
@@ -75,9 +130,17 @@ const getAllOrders = async (): Promise<Order[]> => {
   });
 };
 
+const updateOrderStatus = async (orderId: string, status: OrderStatus): Promise<Order> => {
+  return await prisma.order.update({
+    where: { id: orderId },
+    data: { status }
+  });
+};
+
 export default {
   createOrder,
   getOrder,
   getAllOrders,
-  getShopOrders
+  getShopOrders,
+  updateOrderStatus
 };

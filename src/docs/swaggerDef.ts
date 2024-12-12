@@ -17,7 +17,8 @@ const swaggerDef = {
     { name: 'Shop', description: 'Operations related to shops' },
     { name: 'Category', description: 'Operations related to products categories' },
     { name: 'Product', description: 'Operations related to products' },
-    { name: 'Cart', description: 'Operations related to cart' }
+    { name: 'Cart', description: 'Operations related to cart' },
+    { name: 'Order', description: 'Operations related to order' }
   ],
   servers: [
     {

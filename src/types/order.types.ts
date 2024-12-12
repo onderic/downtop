@@ -10,4 +10,8 @@ export const NewOrderSchema = z.object({
   )
 });
 
+export const UpdateOrderSchema = z.object({
+  status: z.enum(['PENDING', 'PROCESSING', 'CANCELLED'])
+});
+
 export type NewOrder = z.infer<typeof NewOrderSchema> & { userId: string };
