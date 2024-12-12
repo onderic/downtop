@@ -167,8 +167,6 @@ model Payment {
 enum OrderStatus {
   PENDING
   PROCESSING
-  SHIPPED
-  DELIVERED
   CANCELLED
 }
 enum Role {

@@ -1,11 +1,11 @@
-import { Role } from '@prisma/client'; // Import the Role enum from Prisma
+import { Role } from '@prisma/client';
 import { z } from 'zod';
 
 export const newUserSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters long'),
-  phone: z.string().min(10, 'Contact number must be at least 10 digits long'),
+  phone: z.string().min(10, { message: 'Contact number must be at least 10 digits long' }),
   role: z.nativeEnum(Role, { message: 'Role must be either admin, seller, or buyer' }),
-  password: z.string().min(8, 'Password must be at least 8 characters long')
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long' })
 });
 
 export const userSchema = newUserSchema.extend({
