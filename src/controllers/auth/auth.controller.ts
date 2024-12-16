@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import { Request, Response } from 'express';
 import authService from '../../services/user/auth.service';
-import tokenService from '../../services/user/token.service';
+import tokenService from '../../services/token.service';
 import { Login } from '../../types/auth.types';
 import { reqUser } from '../../types/request.types';
 

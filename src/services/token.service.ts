@@ -1,12 +1,12 @@
-import { JwtPayload, JwtTokens, TokenTypes } from '../../types/auth.types';
+import { JwtPayload, JwtTokens, TokenTypes } from '../types/auth.types';
 import jwt from 'jsonwebtoken';
-import config from '../../config/config';
-import ApiError from '../../utils/ApiError';
+import config from '../config/config';
+import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
-import prisma from '../../client';
+import prisma from '../client';
 import axios from 'axios';
-import logger from '../../config/logger';
-import exclude from '../../utils/exclude';
+import logger from '../config/logger';
+import exclude from '../utils/exclude';
 
 const generateToken = async (userId: string, type: TokenTypes): Promise<string> => {
   const now = Math.floor(Date.now() / 1000);
@@ -95,6 +95,25 @@ const generateOTP = async (userId: string): Promise<string> => {
   return otp_token;
 };
 
+export const generateDarajaTokens = async (consumerKey: string, consumerSecret: string) => {
+  try {
+    const response = await axios.get(config.mpesa.accessTokenUrl, {
+      auth: {
+        username: consumerKey,
+        password: consumerSecret
+      }
+    });
+    return response.data.access_token;
+  } catch (error: any) {
+    logger.error('Error generating Daraja tokens:', {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data
+    });
+    throw new ApiError(500, 'Failed to generate Daraja tokens');
+  }
+};
+
 const sendOTP = async (phone: string, otp: string): Promise<boolean> => {
   const payload = {
     mobile: phone,
@@ -176,6 +195,7 @@ export default {
   saveToken,
   deleteToken,
   generateOTP,
+  generateDarajaTokens,
   verifyOTP,
   sendOTP
 };

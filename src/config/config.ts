@@ -30,7 +30,13 @@ const envVarsSchema = z.object({
   ADVANTA_API_KEY: z.string(),
   ADVANTA_PARTNER_ID: z.string(),
   ADVANTA_API_URL: z.string(),
-  ADVANTA_SHORTCODE: z.string()
+  ADVANTA_SHORTCODE: z.string(),
+  MPESA_SHORTCODE: z.string(),
+  MPESA_CONSUMER_KEY: z.string(),
+  MPESA_CONSUMER_SECRET: z.string(),
+  MPESA_PASSKEY: z.string(),
+  MPESA_ACCESS_TOKEN_URL: z.string(),
+  MPESA_STK_PUSH_URL: z.string()
 });
 
 const parsedEnv = envVarsSchema.safeParse(process.env);
@@ -56,5 +62,13 @@ export default {
     partnerId: envVars.ADVANTA_PARTNER_ID,
     apiUrl: envVars.ADVANTA_API_URL,
     shortcode: envVars.ADVANTA_SHORTCODE
+  },
+  mpesa: {
+    shortcode: envVars.MPESA_SHORTCODE,
+    consumerKey: envVars.MPESA_CONSUMER_KEY,
+    consumerSecret: envVars.MPESA_CONSUMER_SECRET,
+    passkey: envVars.MPESA_PASSKEY,
+    accessTokenUrl: envVars.MPESA_ACCESS_TOKEN_URL,
+    stkPushUrl: envVars.MPESA_STK_PUSH_URL
   }
 };

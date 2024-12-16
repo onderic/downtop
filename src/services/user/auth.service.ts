@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import ApiError from '../../utils/ApiError';
 import { isPasswordMatch } from '../../utils/encryption';
-import tokenService from './token.service';
+import tokenService from '../token.service';
 import { JwtTokens, Login } from '../../types/auth.types';
 import { getUser } from '../user/user.service';
 import { eventEmitter } from '../../utils/events';
