@@ -7,6 +7,7 @@ import categoryRoute from './product/category.route';
 import productRoute from './product/product.route';
 import cartRoute from './product/cart.route';
 import orderRoute from './product/order.route';
+import paymentRoute from './shop/payment.route';
 
 const router = express.Router();
 
@@ -42,6 +43,10 @@ const defaultRoutes = [
   {
     path: '/orders',
     route: orderRoute
+  },
+  {
+    path: '/payments',
+    route: paymentRoute
   }
 ];
 
