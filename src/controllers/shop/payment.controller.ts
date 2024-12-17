@@ -8,6 +8,12 @@ const lipaNaMpesa = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(mpesaResponse);
 });
 
+const processCallback = catchAsync(async (req, res) => {
+  await paymentService.processCallback(req.body);
+  res.status(httpStatus.OK).send({ message: 'Callback processed successfully' });
+});
+
 export default {
-  lipaNaMpesa
+  lipaNaMpesa,
+  processCallback
 };
