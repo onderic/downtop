@@ -1,4 +1,3 @@
-import { Payment } from '@prisma/client';
 import httpStatus from 'http-status';
 import prisma from '../../client';
 import ApiError from '../../utils/ApiError';
