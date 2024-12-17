@@ -9,7 +9,8 @@ export const NewShopSchema = z.object({
     message: 'Business type must be either retail or wholesale'
   }),
   buildingName: z.string().min(1, 'Building name is required'),
-  shopNumber: z.string().min(1, 'Shop number is required')
+  shopNumber: z.string().min(1, 'Shop number is required'),
+  image: z.string().min(1, 'URL is required')
 });
 
 export const ShopSchema = NewShopSchema.extend({

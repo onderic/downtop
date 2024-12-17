@@ -40,12 +40,14 @@ model Shop {
   products       Product[]     @relation
   subscription   Subscription[]     @relation
   orderItems     OrderItem[]   @relation(name: "ShopOrderItems")
+  image?            String
 }
 
 model Category {
   id       Int       @id @default(autoincrement())
   name     String
   products Product[] @relation
+  image?     String
 }
 
 model Product {

@@ -3,8 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import { categoryService } from '../../services';
 
 const createCategory = catchAsync(async (req, res) => {
-  const { name } = req.body;
-  const category = await categoryService.createCategory({ name });
+  const { name, image } = req.body;
+  const category = await categoryService.createCategory({ name, image });
   res.status(httpStatus.CREATED).json(category);
 });
 
@@ -20,9 +20,8 @@ const getCategoryById = catchAsync(async (req, res) => {
 });
 
 const updateCategory = catchAsync(async (req, res) => {
-  const { name } = req.body;
   const categoryId = Number(req.params.categoryId);
-  const category = await categoryService.updateCategory(categoryId, { name });
+  const category = await categoryService.updateCategory(categoryId, req.body);
   res.status(httpStatus.OK).json(category);
 });
 

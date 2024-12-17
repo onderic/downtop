@@ -5,7 +5,7 @@ import { shopService } from '../../services';
 import { reqUser } from '../../types/request.types';
 
 const createShop = catchAsync(async (req, res) => {
-  const { name, desc, street, businessType, buildingName, shopNumber } = req.body;
+  const { name, desc, street, businessType, buildingName, shopNumber, image } = req.body;
   const user = req.user as reqUser;
 
   if (user.role !== 'seller' && user.role !== 'admin') {
@@ -19,7 +19,8 @@ const createShop = catchAsync(async (req, res) => {
     businessType,
     buildingName,
     shopNumber,
-    userId: user.id
+    userId: user.id,
+    image
   });
   res.status(httpStatus.CREATED).send(shop);
 });
