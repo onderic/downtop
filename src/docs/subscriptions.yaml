@@ -1,0 +1,325 @@
+paths:
+  /subscriptions:
+    get:
+      summary: Get all subscriptions
+      description: Retrieve all subscriptions with optional pagination and filtering by planId or shopId.
+      operationId: getAllSubscriptions
+      tags:
+        - Subscription
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of records per page.
+        - in: query
+          name: planId
+          schema:
+            type: string
+          description: Filter by plan ID.
+        - in: query
+          name: shopId
+          schema:
+            type: string
+          description: Filter by shop ID.
+      responses:
+        '200':
+          description: Successfully retrieved subscriptions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPaginatedResponse'
+        '401':
+          description: Unauthorized
+
+  /subscriptions/{shopId}:
+    get:
+      summary: Get subscriptions for a shop
+      description: Retrieve subscriptions for a specific shop with optional pagination and status filtering.
+      operationId: getShopSubscriptions
+      tags:
+        - Subscription
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: shopId
+          required: true
+          schema:
+            type: string
+          description: Shop ID.
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of records per page.
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - PAUSED
+              - CANCELLED
+          description: Filter by subscription status.
+      responses:
+        '200':
+          description: Successfully retrieved shop subscriptions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPaginatedResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Shop not found.
+
+  /subscriptions/{subscriptionId}:
+    get:
+      summary: Get a subscription by ID
+      description: Retrieve details of a specific subscription by its ID.
+      operationId: getSubscriptionById
+      tags:
+        - Subscription
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: subscriptionId
+          required: true
+          schema:
+            type: string
+          description: Subscription ID.
+      responses:
+        '200':
+          description: Successfully retrieved subscription.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionSchema'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Subscription not found.
+
+  /subscriptions/plans:
+    get:
+      summary: Get all plans
+      description: Retrieve all available subscription plans.
+      operationId: getAllPlans
+      tags:
+        - Plan
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved plans.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanArrayResponse'
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Create a new plan
+      description: Create a new subscription plan.
+      operationId: createPlan
+      tags:
+        - Plan
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPlanSchema'
+      responses:
+        '201':
+          description: Plan created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanSchema'
+        '401':
+          description: Unauthorized
+
+  /subscriptions/plans/{planId}:
+    get:
+      summary: Get a plan by ID
+      description: Retrieve details of a specific plan by its ID.
+      operationId: getPlanById
+      tags:
+        - Plan
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: planId
+          required: true
+          schema:
+            type: string
+          description: Plan ID.
+      responses:
+        '200':
+          description: Successfully retrieved plan.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanSchema'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Plan not found.
+
+    patch:
+      summary: Update a plan
+      description: Update details of an existing plan.
+      operationId: updatePlan
+      tags:
+        - Plan
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: planId
+          required: true
+          schema:
+            type: string
+          description: Plan ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanUpdateSchema'
+      responses:
+        '200':
+          description: Plan updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanSchema'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Plan not found.
+
+    delete:
+      summary: Delete a plan
+      description: Delete an existing plan by its ID.
+      operationId: deletePlan
+      tags:
+        - Plan
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: planId
+          required: true
+          schema:
+            type: string
+          description: Plan ID.
+      responses:
+        '204':
+          description: Plan deleted successfully.
+        '401':
+          description: Unauthorized
+        '404':
+          description: Plan not found.
+
+components:
+  schemas:
+    SubscriptionSchema:
+      type: object
+      properties:
+        id:
+          type: string
+        shopId:
+          type: string
+        planId:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - PAUSED
+            - CANCELLED
+        price:
+          type: number
+    SubscriptionPaginatedResponse:
+      type: object
+      properties:
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionSchema'
+        total:
+          type: integer
+    PlanSchema:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        duration:
+          type: integer
+          description: Duration of the plan in months.
+        price:
+          type: number
+        features:
+          type: array
+          items:
+            type: string
+    PlanArrayResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/PlanSchema'
+    NewPlanSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        duration:
+          type: integer
+        price:
+          type: number
+        features:
+          type: array
+          items:
+            type: string
+    PlanUpdateSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        duration:
+          type: integer
+        price:
+          type: number
+        features:
+          type: array
+          items:
+            type: string
