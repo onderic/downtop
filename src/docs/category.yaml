@@ -53,7 +53,7 @@ paths:
           name: categoryId
           required: true
           schema:
-            type: string
+            type: number
           description: Category ID
       responses:
         '200':
@@ -78,7 +78,7 @@ paths:
           name: categoryId
           required: true
           schema:
-            type: string
+            type: number
           description: Category ID
       requestBody:
         content:
@@ -110,7 +110,7 @@ paths:
           name: categoryId
           required: true
           schema:
-            type: string
+            type: number
           description: Category ID
       responses:
         '204':
@@ -157,4 +157,4 @@ components:
           description: Updated category name
         description:
           type: string
-          description: Updated category description 
+          description: Updated category description
