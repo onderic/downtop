@@ -3,8 +3,8 @@ import catchAsync from '../../utils/catchAsync';
 import { paymentService } from '../../services';
 
 const lipaNaMpesa = catchAsync(async (req, res) => {
-  const { phone, shopId } = req.body;
-  const mpesaResponse = await paymentService.lipaNaMpesa({ phone, shopId });
+  const { phone, shopId, planId } = req.body;
+  const mpesaResponse = await paymentService.lipaNaMpesa({ phone, shopId, planId });
   res.status(httpStatus.CREATED).send(mpesaResponse);
 });
 
