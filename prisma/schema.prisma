@@ -141,6 +141,7 @@ model Payment {
   checkoutRequestId   String?
   subscriptionId      String?
   shopId              String
+  planId              String
   resultCode          Int?
   resultDesc          String?
   amount              Float?
@@ -170,7 +171,7 @@ model Subscription {
 
 model Plan {
   id        String   @id @default(uuid())
-  name      String
+  name      String  @unique
   price     Float
   subscriptions Subscription[]
   duration  Int
