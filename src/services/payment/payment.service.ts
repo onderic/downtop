@@ -102,7 +102,7 @@ const processCallback = async (callbackData: any) => {
     const subscription = await prisma.subscription.create({
       data: {
         shopId: payment.shopId,
-        plan: 'Monthly',
+        planId: 'Monthly',
         price: amount,
         status: 'active',
         endDate: dayjs().add(30, 'day').toDate()
