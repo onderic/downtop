@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import prisma from '../../client';
 import ApiError from '../../utils/ApiError';
-import { Mpesa } from '../../types/mpesa.types';
+import { MpesaStkRequest } from '../../types/mpesa.types';
 import tokenService from '../token.service';
 import generateTimestamp from '../../utils/timestamp';
 import { generatePassword } from '../../utils/password';
@@ -10,7 +10,7 @@ import config from '../../config/config';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
-const lipaNaMpesa = async (mpesaData: Mpesa): Promise<unknown> => {
+const lipaNaMpesa = async (mpesaData: MpesaStkRequest): Promise<unknown> => {
   try {
     //**Generate access token**
     const accessToken = await tokenService.generateDarajaTokens(
@@ -18,12 +18,17 @@ const lipaNaMpesa = async (mpesaData: Mpesa): Promise<unknown> => {
       config.mpesa.consumerSecret
     );
 
-    const shop = await prisma.shop.findUnique({
-      where: { id: mpesaData.shopId }
-    });
+    const [plan, shop] = await Promise.all([
+      prisma.plan.findUnique({
+        where: { id: mpesaData.planId }
+      }),
+      prisma.shop.findUnique({
+        where: { id: mpesaData.shopId }
+      })
+    ]);
 
-    if (!shop) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
+    if (!shop || !plan) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Shop or plan not found');
     }
 
     const phone_number = convertToInternational(mpesaData.phone);
@@ -33,11 +38,11 @@ const lipaNaMpesa = async (mpesaData: Mpesa): Promise<unknown> => {
       Password: generatePassword(config.mpesa.shortcode, config.mpesa.passkey),
       Timestamp: generateTimestamp(),
       TransactionType: 'CustomerPayBillOnline',
-      Amount: 1,
+      Amount: plan.price,
       PartyA: phone_number,
       PartyB: config.mpesa.shortcode,
       PhoneNumber: phone_number,
-      CallBackURL: 'https://20e8-41-89-162-2.ngrok-free.app/v1/payments/callback/',
+      CallBackURL: `${config.appUrl}/${config.mpesa.callbackUrl}`,
       AccountReference: shop.name,
       TransactionDesc: `Payment for subscription of ${shop.name}`
     };
@@ -53,7 +58,8 @@ const lipaNaMpesa = async (mpesaData: Mpesa): Promise<unknown> => {
       data: {
         merchantRequestId: response.data.MerchantRequestID,
         checkoutRequestId: response.data.CheckoutRequestID,
-        shopId: shop.id
+        shopId: shop.id,
+        planId: plan.id
       }
     });
     return response.data;
@@ -102,7 +108,7 @@ const processCallback = async (callbackData: any) => {
     const subscription = await prisma.subscription.create({
       data: {
         shopId: payment.shopId,
-        planId: 'Monthly',
+        planId: payment.planId,
         price: amount,
         status: 'active',
         endDate: dayjs().add(30, 'day').toDate()
