@@ -157,15 +157,28 @@ model Subscription {
   id             String   @id @default(uuid())
   shopId         String
   shop           Shop     @relation(fields: [shopId], references: [id])
-  plan           String
-  price          Float
+  planId         String
+  plan           Plan    @relation(fields: [planId], references: [id])
   status         SubscriptionStatus
+  price          Float
   startDate      DateTime @default(now())
   endDate        DateTime
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   payments       Payment[]
 }
+
+model Plan {
+  id        String   @id @default(uuid())
+  name      String
+  price     Float
+  subscriptions Subscription[]
+  duration  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  features  String[]
+} 
+
 
 enum OrderStatus {
   PENDING
