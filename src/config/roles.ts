@@ -12,7 +12,9 @@ const allRoles = {
     'updateProduct',
     'deleteProduct',
     'getorders',
-    'updateorder'
+    'updateorder',
+    'getShopSubscriptions',
+    'getSubscription'
   ]
 };
 
