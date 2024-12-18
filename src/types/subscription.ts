@@ -1,7 +1,5 @@
 import * as z from 'zod';
 import { SubscriptionStatus } from '@prisma/client';
-import { duration } from 'moment';
-import { features } from 'process';
 
 const subscription = z.object({
   id: z.string(),
@@ -26,5 +24,9 @@ const plan = z.object({
   updatedAt: z.date(),
   features: z.array(z.string())
 });
+
+export const newPlanSchema = plan.omit({ id: true, createdAt: true, updatedAt: true });
+export const updatePlanSchema = newPlanSchema.partial();
 export type Subscription = z.infer<typeof subscription>;
 export type plan = z.infer<typeof plan>;
+export type newPlan = z.infer<typeof newPlanSchema>;

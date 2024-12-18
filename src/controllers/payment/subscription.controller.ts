@@ -16,6 +16,7 @@ const getShopSubscriptions = catchAsync(async (req, res) => {
     parseInt(limit, 10),
     status
   );
+
   res.send(subscriptions);
 });
 

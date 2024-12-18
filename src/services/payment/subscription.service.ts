@@ -1,30 +1,8 @@
 import httpStatus from 'http-status';
 import prisma from '../../client';
 import ApiError from '../../utils/ApiError';
-import { plan, Subscription } from '../../types/subscription';
+import { plan, newPlan, Subscription } from '../../types/subscription';
 import { SubscriptionStatus } from '@prisma/client';
-
-const createSubscription = async (subscriptionData: Subscription): Promise<Subscription> => {
-  const shop = await prisma.shop.findUnique({
-    where: { id: subscriptionData.shopId }
-  });
-
-  if (!shop) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Shop not found');
-  }
-
-  const subscription = await prisma.subscription.create({
-    data: {
-      shopId: shop.id,
-      planId: subscriptionData.planId,
-      endDate: new Date(),
-      price: subscriptionData.price,
-      status: subscriptionData.status
-    }
-  });
-
-  return subscription;
-};
 
 const getShopSubscriptions = async (
   shopId: string,
@@ -98,7 +76,7 @@ const getSubscriptionById = async (subscriptionId: string): Promise<Subscription
 
   return subscription;
 };
-const createPlan = async (planData: plan): Promise<plan> => {
+const createPlan = async (planData: newPlan): Promise<plan> => {
   const plan = await prisma.plan.create({
     data: planData
   });
@@ -106,7 +84,7 @@ const createPlan = async (planData: plan): Promise<plan> => {
   return plan;
 };
 
-const updatePlan = async (planId: string, updateBody: plan): Promise<plan> => {
+const updatePlan = async (planId: string, updateBody: newPlan): Promise<plan> => {
   const plan = await prisma.plan.update({
     where: { id: planId },
     data: updateBody
@@ -139,7 +117,6 @@ const getPlanById = async (planId: string): Promise<plan> => {
 };
 
 export default {
-  createSubscription,
   getShopSubscriptions,
   getSubscriptionById,
   createPlan,
