@@ -1,10 +1,13 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { z } from 'zod';
+import { Mpesa } from '../types/mpesa.types';
+import app from '../app';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 const envVarsSchema = z.object({
+  APP_URL: z.string(),
   NODE_ENV: z.enum(['production', 'development', 'test']),
   PORT: z
     .string()
@@ -36,7 +39,8 @@ const envVarsSchema = z.object({
   MPESA_CONSUMER_SECRET: z.string(),
   MPESA_PASSKEY: z.string(),
   MPESA_ACCESS_TOKEN_URL: z.string(),
-  MPESA_STK_PUSH_URL: z.string()
+  MPESA_STK_PUSH_URL: z.string(),
+  MPESA_CALLBACK_URL: z.string()
 });
 
 const parsedEnv = envVarsSchema.safeParse(process.env);
@@ -48,6 +52,7 @@ if (!parsedEnv.success) {
 const envVars = parsedEnv.data;
 
 export default {
+  appUrl: envVars.APP_URL,
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   jwt: {
@@ -69,6 +74,7 @@ export default {
     consumerSecret: envVars.MPESA_CONSUMER_SECRET,
     passkey: envVars.MPESA_PASSKEY,
     accessTokenUrl: envVars.MPESA_ACCESS_TOKEN_URL,
-    stkPushUrl: envVars.MPESA_STK_PUSH_URL
+    stkPushUrl: envVars.MPESA_STK_PUSH_URL,
+    callbackUrl: envVars.MPESA_CALLBACK_URL
   }
 };

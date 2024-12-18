@@ -5,4 +5,5 @@ export { default as productController } from './product/product.controller';
 export { default as categoryController } from './product/category.controller';
 export { default as cartController } from './cart/cart.controller';
 export { default as orderController } from './product/order.controller';
-export { default as paymentController } from './shop/payment.controller';
+export { default as paymentController } from './payment/payment.controller';
+export { default as subscriptionController } from './payment/subscription.controller';
