@@ -32,7 +32,6 @@ const lipaNaMpesa = async (mpesaData: MpesaStkRequest): Promise<unknown> => {
     }
 
     const phone_number = convertToInternational(mpesaData.phone);
-    console.log('phone', phone_number);
     const data = {
       BusinessShortCode: config.mpesa.shortcode,
       Password: generatePassword(config.mpesa.shortcode, config.mpesa.passkey),
@@ -46,10 +45,11 @@ const lipaNaMpesa = async (mpesaData: MpesaStkRequest): Promise<unknown> => {
       AccountReference: shop.name,
       TransactionDesc: `Payment for subscription of ${shop.name}`
     };
+    console.log(data.CallBackURL);
 
     const response = await axios.post(config.mpesa.stkPushUrl, data, {
       headers: {
-        Authorization: `Bearer ${accessToken}`, // return payment;
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
       }
     });
@@ -80,70 +80,81 @@ const processCallback = async (callbackData: any) => {
   const { stkCallback } = Body;
 
   const { MerchantRequestID, CheckoutRequestID, ResultCode, ResultDesc } = stkCallback;
-
-  // Extract callback metadata items
   const callbackMetadataItems: CallbackItem[] = stkCallback.CallbackMetadata?.Item || [];
 
-  const payment = await prisma.payment.findFirst({
-    where: { checkoutRequestId: CheckoutRequestID }
-  });
+  return prisma
+    .$transaction(async (tx) => {
+      const payment = await tx.payment.findFirst({
+        where: {
+          AND: [{ checkoutRequestId: CheckoutRequestID }, { resultCode: null }]
+        }
+      });
 
-  if (!payment) {
-    console.error(`No payment found for CheckoutRequestID: ${CheckoutRequestID}`);
-    return;
-  }
-
-  if (ResultCode === 0) {
-    // Success case
-    const amount = callbackMetadataItems.find((item) => item.Name === 'Amount')?.Value;
-    const mpesaReceiptNumber = callbackMetadataItems.find(
-      (item) => item.Name === 'MpesaReceiptNumber'
-    )?.Value;
-    const transactionDate = callbackMetadataItems.find(
-      (item) => item.Name === 'TransactionDate'
-    )?.Value;
-    const phoneNumber = callbackMetadataItems.find((item) => item.Name === 'PhoneNumber')?.Value;
-
-    // **Create a subscription**
-    const subscription = await prisma.subscription.create({
-      data: {
-        shopId: payment.shopId,
-        planId: payment.planId,
-        price: amount,
-        status: 'active',
-        endDate: dayjs().add(30, 'day').toDate()
+      if (!payment) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Payment not found or invalid');
       }
-    });
 
-    await prisma.payment.update({
-      where: { id: payment.id },
-      data: {
-        subscriptionId: subscription.id,
-        merchantRequestId: MerchantRequestID,
-        checkoutRequestId: CheckoutRequestID,
-        resultCode: ResultCode,
-        resultDesc: ResultDesc,
-        amount: amount,
-        receiptNumber: mpesaReceiptNumber,
-        transactionDate: transactionDate.toString(),
-        phoneNumber: phoneNumber.toString()
+      if (ResultCode === 0) {
+        // Success case
+        const amount = callbackMetadataItems.find((item) => item.Name === 'Amount')?.Value;
+        const mpesaReceiptNumber = callbackMetadataItems.find(
+          (item) => item.Name === 'MpesaReceiptNumber'
+        )?.Value;
+        const transactionDate = callbackMetadataItems.find(
+          (item) => item.Name === 'TransactionDate'
+        )?.Value;
+        const phoneNumber = callbackMetadataItems.find(
+          (item) => item.Name === 'PhoneNumber'
+        )?.Value;
+
+        // Create subscription within transaction
+        const subscription = await tx.subscription.create({
+          data: {
+            shopId: payment.shopId,
+            planId: payment.planId,
+            price: amount,
+            status: 'active',
+            endDate: dayjs().add(30, 'day').toDate()
+          }
+        });
+
+        // Update payment within transaction
+        const updatedPayment = await tx.payment.update({
+          where: { id: payment.id },
+          data: {
+            subscriptionId: subscription.id,
+            merchantRequestId: MerchantRequestID,
+            checkoutRequestId: CheckoutRequestID,
+            resultCode: ResultCode,
+            resultDesc: ResultDesc,
+            amount: amount,
+            receiptNumber: mpesaReceiptNumber,
+            transactionDate: transactionDate.toString(),
+            phoneNumber: phoneNumber.toString()
+          }
+        });
+
+        console.log(
+          `Payment successful: ${ResultDesc}, Amount: ${amount}, Receipt: ${mpesaReceiptNumber}`
+        );
+        return updatedPayment;
+      } else {
+        console.error(`Payment failed: ${ResultDesc}, ResultCode: ${ResultCode}`);
+
+        const updatedPayment = await tx.payment.update({
+          where: { id: payment.id },
+          data: {
+            resultCode: ResultCode,
+            resultDesc: ResultDesc
+          }
+        });
+        return updatedPayment;
       }
+    })
+    .catch((error) => {
+      console.error('Transaction failed:', error);
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to process payment callback');
     });
-
-    console.log(
-      `Payment successful: ${ResultDesc}, Amount: ${amount}, Receipt: ${mpesaReceiptNumber}`
-    );
-  } else {
-    console.error(`Payment failed: ${ResultDesc}, ResultCode: ${ResultCode}`);
-
-    await prisma.payment.update({
-      where: { id: payment.id },
-      data: {
-        resultCode: ResultCode,
-        resultDesc: ResultDesc
-      }
-    });
-  }
 };
 
 export default {
