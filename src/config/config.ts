@@ -1,8 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { z } from 'zod';
-import { Mpesa } from '../types/mpesa.types';
-import app from '../app';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
@@ -46,7 +44,7 @@ const envVarsSchema = z.object({
 const parsedEnv = envVarsSchema.safeParse(process.env);
 
 if (!parsedEnv.success) {
-  throw new Error(`Config validation error: ${parsedEnv.error.format()}`);
+  throw new Error(`Config validation error: ${JSON.stringify(parsedEnv.error.format(), null, 2)}`);
 }
 
 const envVars = parsedEnv.data;
