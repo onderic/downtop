@@ -1,0 +1,62 @@
+paths:
+  /payments:
+    post:
+      summary: Initiate Mpesa STK Push
+      description: Initiates M-Pesa STK push payment request for subscription
+      operationId: lipaNaMpesa
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                  pattern: ^(07|01)\d{8}$
+                  description: Phone number (format - 07XXXXXXXX or 01XXXXXXXX)
+                  example: "0712345678"
+                shopId:
+                  type: string
+                  format: uuid
+                  description: Shop identifier
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                planId:
+                  type: string
+                  format: uuid
+                  description: Subscription plan identifier
+                  example: "123e4567-e89b-12d3-a456-426614174001"
+              required:
+                - phone
+                - shopId
+                - planId
+      responses:
+        '201':
+          description: STK push initiated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  MerchantRequestID:
+                    type: string
+                    description: Unique request identifier
+                  CheckoutRequestID:
+                    type: string
+                    description: Unique checkout identifier
+                  ResponseDescription:
+                    type: string
+                    description: Human readable response
+                  CustomerMessage:
+                    type: string
+                    description: Message for customer
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '500':
+          description: Payment initiation failed
