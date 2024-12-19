@@ -18,12 +18,12 @@ router
 
 router
   .route('/plans')
-  .get(auth('getAllPlans'), subscriptionController.getAllPlans)
-  .post(auth('createPlan'), validate(newPlanSchema), subscriptionController.createPlan);
+  .get(subscriptionController.getAllPlans)
+  .post(validate(newPlanSchema), subscriptionController.createPlan);
 
 router
   .route('/plans/:planId')
-  .get(auth('getPlan'), subscriptionController.getPlanById)
+  .get(subscriptionController.getPlanById)
   .patch(auth('updatePlan'), validate(updatePlanSchema), subscriptionController.updatePlan)
   .delete(auth('deletePlan'), subscriptionController.deletePlan);
 
