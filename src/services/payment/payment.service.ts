@@ -42,11 +42,9 @@ const lipaNaMpesa = async (mpesaData: MpesaStkRequest): Promise<unknown> => {
       PartyB: config.mpesa.shortcode,
       PhoneNumber: phone_number,
       CallBackURL: `${config.appUrl}/${config.mpesa.callbackUrl}`,
-      AccountReference: shop.name,
+      AccountReference: `${shop.name} at Downtop`,
       TransactionDesc: `Payment for subscription of ${shop.name}`
     };
-    console.log(data.CallBackURL);
-
     const response = await axios.post(config.mpesa.stkPushUrl, data, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
