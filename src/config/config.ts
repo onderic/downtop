@@ -38,7 +38,9 @@ const envVarsSchema = z.object({
   MPESA_PASSKEY: z.string(),
   MPESA_ACCESS_TOKEN_URL: z.string(),
   MPESA_STK_PUSH_URL: z.string(),
-  MPESA_CALLBACK_URL: z.string()
+  MPESA_CALLBACK_URL: z.string(),
+  MPESA_VERIFY_TRANSACTION: z.string(),
+  MPESA_PUBLICK_KEY: z.string()
 });
 
 const parsedEnv = envVarsSchema.safeParse(process.env);
@@ -73,6 +75,8 @@ export default {
     passkey: envVars.MPESA_PASSKEY,
     accessTokenUrl: envVars.MPESA_ACCESS_TOKEN_URL,
     stkPushUrl: envVars.MPESA_STK_PUSH_URL,
-    callbackUrl: envVars.MPESA_CALLBACK_URL
+    callbackUrl: envVars.MPESA_CALLBACK_URL,
+    mpesaVerifyTransaction: envVars.MPESA_VERIFY_TRANSACTION,
+    publicKey: envVars.MPESA_PUBLICK_KEY
   }
 };
