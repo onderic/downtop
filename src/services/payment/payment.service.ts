@@ -9,6 +9,7 @@ import { convertToInternational } from '../../utils/convertPhone';
 import config from '../../config/config';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import generateSecurityCredentials from '../../utils/security';
 
 const lipaNaMpesa = async (mpesaData: MpesaStkRequest): Promise<unknown> => {
   try {
@@ -155,7 +156,57 @@ const processCallback = async (callbackData: any) => {
     });
 };
 
+const verifyTransaction = async (mpesaReceiptNumber: string) => {
+  try {
+    const accessToken = await tokenService.generateDarajaTokens(
+      config.mpesa.consumerKey,
+      config.mpesa.consumerSecret
+    );
+    const payload = {
+      Initiator: 'testapiuser',
+      SecurityCredential: generateSecurityCredentials(),
+      CommandID: 'TransactionStatusQuery',
+      TransactionID: mpesaReceiptNumber,
+      OriginatorConversationID: 'AG_20190826_0000777ab7d848b9e721',
+      PartyA: config.mpesa.shortcode,
+      IdentifierType: '4',
+      ResultURL: `${config.appUrl}/payments/transactionstatus/result`,
+      QueueTimeOutURL: `${config.appUrl}/payments/timeout`,
+      Remarks: 'Transaction status verification',
+      Occasion: 'Transaction Check'
+    };
+
+    // Prepare Headers
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    };
+
+    // Send Request
+    const response = await axios.post(config.mpesa.mpesaVerifyTransaction, payload, { headers });
+
+    console.log('Transaction Status Response:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('Error verifying transaction:', error.response?.data || error.message);
+    throw new Error('Transaction verification failed');
+  }
+};
+
+const resultCallback = (body: any) => {
+  console.log('Result Callback Body:', JSON.stringify(body, null, 2));
+  return { status: 'Result callback processed successfully' };
+};
+
+const timeoutCallback = (body: any) => {
+  console.log('Timeout Callback Body:', body);
+  return { status: 'Timeout callback processed successfully' };
+};
+
 export default {
   lipaNaMpesa,
-  processCallback
+  processCallback,
+  verifyTransaction,
+  resultCallback,
+  timeoutCallback
 };

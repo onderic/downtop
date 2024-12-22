@@ -13,7 +13,26 @@ const processCallback = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ message: 'Callback processed successfully' });
 });
 
+const verifyTransaction = catchAsync(async (req, res) => {
+  const { mpesaReceiptNumber } = req.body;
+  const response = await paymentService.verifyTransaction(mpesaReceiptNumber);
+  res.send(response);
+});
+
+const resultCallback = catchAsync(async (req, res) => {
+  const response = paymentService.resultCallback(req.body);
+  res.send(response);
+});
+
+const timeoutCallback = catchAsync(async (req, res) => {
+  const response = paymentService.timeoutCallback(req.body);
+  res.send(response);
+});
+
 export default {
   lipaNaMpesa,
-  processCallback
+  processCallback,
+  verifyTransaction,
+  resultCallback,
+  timeoutCallback
 };
