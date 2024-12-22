@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import config from '../config/config';
 
 const generateSecurityCredentials = (): string => {
-  const password = 'Safaricom999!*!';
+  const password = '';
   const publicKey = config.mpesa.publicKey || '';
   const encryptedPassword = crypto.publicEncrypt(
     {
