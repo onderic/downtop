@@ -9,7 +9,7 @@ import { convertToInternational } from '../../utils/convertPhone';
 import config from '../../config/config';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import generateSecurityCredentials from '../../utils/security';
+// import generateSecurityCredentials from '../../utils/security';
 
 const lipaNaMpesa = async (mpesaData: MpesaStkRequest): Promise<unknown> => {
   try {
