@@ -9,7 +9,7 @@ import { convertToInternational } from '../../utils/convertPhone';
 import config from '../../config/config';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import generateSecurityCredentials from '../../utils/security';
+// import generateSecurityCredentials from '../../utils/security';
 
 const lipaNaMpesa = async (mpesaData: MpesaStkRequest): Promise<unknown> => {
   try {
@@ -164,7 +164,8 @@ const verifyTransaction = async (mpesaReceiptNumber: string) => {
     );
     const payload = {
       Initiator: 'testapiuser',
-      SecurityCredential: generateSecurityCredentials(),
+      SecurityCredential:
+        'ClONZiMYBpc65lmpJ7nvnrDmUe0WvHvA5QbOsPjEo92B6IGFwDdvdeJIFL0kgwsEKWu6SQKG4ZZUxjC',
       CommandID: 'TransactionStatusQuery',
       TransactionID: mpesaReceiptNumber,
       OriginatorConversationID: 'AG_20190826_0000777ab7d848b9e721',
