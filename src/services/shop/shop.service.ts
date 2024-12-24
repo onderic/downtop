@@ -5,6 +5,13 @@ import ApiError from '../../utils/ApiError';
 import { NewShop, ShopUpdateDTO } from '../../types/shop.types';
 
 const createShop = async (shopData: NewShop): Promise<Shop> => {
+  const existingShop = await prisma.shop.findUnique({
+    where: { userId: shopData.userId }
+  });
+
+  if (existingShop) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User already has a shop');
+  }
   const shop = await prisma.shop.create({
     data: shopData
   });
